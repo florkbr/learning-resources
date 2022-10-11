@@ -26,6 +26,7 @@ const App = () => {
 
       // You can use directly the name of your app
       identifyApp(pckg.insights.appname);
+      insights.chrome.identifyApp('learningResources');
       unregister = on('APP_NAVIGATION', (event) =>
         history.push(`/${event.navId}`)
       );
