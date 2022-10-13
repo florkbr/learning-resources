@@ -1,46 +1,36 @@
-import React, { Fragment, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import { Reducer } from 'redux';
+import React, { useEffect, useState } from 'react';
 
-import { Routes } from './Routes';
 import './App.scss';
-
-import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
-import NotificationsPortal from '@redhat-cloud-services/frontend-components-notifications/NotificationPortal';
-import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
+import { QuickStart } from '@patternfly/quickstarts';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
-import pckg from '../package.json';
-
-type Unregister = () => void;
+import { Main } from '@redhat-cloud-services/frontend-components/Main';
 
 const App = () => {
-  const history = useHistory();
   const chrome = useChrome();
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const { quickStarts } = chrome;
+  const { Catalog } = quickStarts;
 
   useEffect(() => {
-    let unregister: Unregister;
-    if (chrome) {
-      const registry = getRegistry();
-      registry.register({ notifications: notificationsReducer as Reducer });
-      const { identifyApp, on } = chrome.init();
-
-      // You can use directly the name of your app
-      identifyApp(pckg.insights.appname);
-      insights.chrome.identifyApp('learningResources');
-      unregister = on('APP_NAVIGATION', (event) =>
-        history.push(`/${event.navId}`)
-      );
-    }
-    return () => {
-      unregister();
-    };
-  }, [chrome]);
+    fetch(`/api/quickstarts/v1/quickstarts?bundle=settings`)
+      .then<{ data: { content: QuickStart }[] }>((response) => response.json())
+      .then((response) =>
+        quickStarts.set(
+          'settings',
+          response.data.map((i) => i.content)
+        )
+      )
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }, []);
 
   return (
-    <Fragment>
-      <NotificationsPortal />
-      <Routes />
-    </Fragment>
+    <Main>
+      <Catalog />
+      <p> This is page header text </p>
+    </Main>
   );
 };
 
