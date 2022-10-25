@@ -24,7 +24,7 @@ const App = () => {
       .catch((err) => {
         console.log(err.message);
       });
-  }, [quickStarts]);
+  }, []);
 
   return <Catalog />;
 };
