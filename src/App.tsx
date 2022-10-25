@@ -1,47 +1,32 @@
-import React, { Fragment, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import { Reducer } from 'redux';
+import React, { useEffect } from 'react';
 
-import { Routes } from './Routes';
 import './App.scss';
-
-import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
-import NotificationsPortal from '@redhat-cloud-services/frontend-components-notifications/NotificationPortal';
-import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
+import { QuickStart } from '@patternfly/quickstarts';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
-import pckg from '../package.json';
-
-type Unregister = () => void;
 
 const App = () => {
-  const history = useHistory();
   const chrome = useChrome();
 
+  const { quickStarts } = chrome;
+  const { Catalog } = quickStarts;
+
   useEffect(() => {
-    let unregister: Unregister;
-    if (chrome) {
-      const registry = getRegistry();
-      registry.register({ notifications: notificationsReducer as Reducer });
-      const { identifyApp, on } = chrome.init();
+    fetch(`/api/quickstarts/v1/quickstarts?bundle=settings`)
+      .then<{ data: { content: QuickStart }[] }>((response) => response.json())
+      .then(({ data }) =>
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        quickStarts.set(
+          'settings',
+          data.map(({ content }) => content)
+        )
+      )
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }, [quickStarts]);
 
-      // You can use directly the name of your app
-      identifyApp(pckg.insights.appname);
-      insights.chrome.identifyApp('learningResources');
-      unregister = on('APP_NAVIGATION', (event) =>
-        history.push(`/${event.navId}`)
-      );
-    }
-    return () => {
-      unregister();
-    };
-  }, [chrome]);
-
-  return (
-    <Fragment>
-      <NotificationsPortal />
-      <Routes />
-    </Fragment>
-  );
+  return <Catalog />;
 };
 
 export default App;
