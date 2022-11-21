@@ -127,7 +127,8 @@ export const App: React.FC = () => {
         <Gallery className="pfext-quick-start-catalog__gallery" hasGutter>
           {allQuickStarts
             ?.filter(
-              (quickStart: QuickStart) => quickStart.metadata.instructional
+              (quickStart: QuickStart) =>
+                !quickStart.metadata.externalDocumentation
             )
             .map((quickStart: QuickStart) => {
               const {
