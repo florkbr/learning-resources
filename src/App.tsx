@@ -41,7 +41,7 @@ export const App: React.FC = (props: any) => {
   const chrome = useChrome();
 
   const { quickStarts } = chrome;
-  const targetBundle = props?.bundle;
+  const targetBundle = props?.bundle || 'settings';
 
   useEffect(() => {
     fetch(`/api/quickstarts/v1/quickstarts?bundle=${targetBundle}`)
