@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import './App.scss';
-import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
+import React, { useEffect } from "react";
+import "./App.scss";
+import { useChrome } from "@redhat-cloud-services/frontend-components/useChrome";
 import {
   LoadingBox,
   QuickStart,
@@ -18,7 +18,7 @@ import {
   clearFilterParams,
   filterQuickStarts,
   getQuickStartStatus,
-} from '@patternfly/quickstarts';
+} from "@patternfly/quickstarts";
 import {
   Divider,
   Gallery,
@@ -26,9 +26,9 @@ import {
   Text,
   TextContent,
   ToolbarContent,
-} from '@patternfly/react-core';
+} from "@patternfly/react-core";
 
-export const App: React.FC = () => {
+export const App: React.FC = (props: any) => {
   const {
     activeQuickStartID,
     allQuickStartStates,
@@ -41,15 +41,17 @@ export const App: React.FC = () => {
   const chrome = useChrome();
 
   const { quickStarts } = chrome;
+  const targetBundle = props?.bundle;
+  // debugger;
 
   useEffect(() => {
-    fetch(`/api/quickstarts/v1/quickstarts?bundle=settings`)
+    fetch(`/api/quickstarts/v1/quickstarts?bundle=${targetBundle}`)
       .then<{ data: { content: QuickStart }[] }>((response) => response.json())
       .then(({ data }) =>
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         quickStarts.set(
-          'settings',
+          `${targetBundle}`,
           data.map(({ content }) => content)
         )
       )
@@ -66,7 +68,7 @@ export const App: React.FC = () => {
   >(
     filterQuickStarts(
       allQuickStarts || [],
-      filter?.keyword || '',
+      filter?.keyword || "",
       filter?.status?.statusFilters,
       allQuickStartStates || {}
     ).sort(sortFnc)
@@ -77,7 +79,7 @@ export const App: React.FC = () => {
     setFilteredQuickStarts(
       filterQuickStarts(
         allQuickStarts || [],
-        filter?.keyword || '',
+        filter?.keyword || "",
         filter?.status?.statusFilters,
         allQuickStartStates || {}
       ).sort(sortFnc)
@@ -98,20 +100,20 @@ export const App: React.FC = () => {
     ).sort((q1: QuickStart, q2: QuickStart) =>
       q1.spec.displayName.localeCompare(q2.spec.displayName)
     );
-    setFilter('keyword', searchValue);
+    setFilter("keyword", searchValue);
     setFilteredQuickStarts(result);
   };
 
   const onStatusChange = (statusList: string[]) => {
     const result = filterQuickStarts(
       allQuickStarts || [],
-      filter?.keyword || '',
+      filter?.keyword || "",
       statusList,
       allQuickStartStates || {}
     ).sort((q1: QuickStart, q2: QuickStart) =>
       q1.spec.displayName.localeCompare(q2.spec.displayName)
     );
-    setFilter('status', statusList);
+    setFilter("status", statusList);
     setFilteredQuickStarts(result);
   };
 
@@ -188,8 +190,8 @@ export const App: React.FC = () => {
   );
 
   const clearFilters = () => {
-    setFilter('keyword', '');
-    setFilter('status', []);
+    setFilter("keyword", "");
+    setFilter("status", []);
     clearFilterParams();
     setFilteredQuickStarts(
       allQuickStarts?.sort((q1: QuickStart, q2: QuickStart) =>
