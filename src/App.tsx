@@ -44,6 +44,8 @@ export const App: React.FC = (props: any) => {
   const { quickStarts } = chrome;
   const targetBundle = props?.bundle || 'settings';
 
+  chrome?.updateDocumentTitle?.('Learning Resources');
+
   useEffect(() => {
     fetch(`/api/quickstarts/v1/quickstarts?bundle=${targetBundle}`)
       .then<{ data: { content: QuickStart }[] }>((response) => response.json())
