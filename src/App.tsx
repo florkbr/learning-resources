@@ -208,32 +208,38 @@ export const App: React.FC = (props: any) => {
 
   return (
     <>
-      <QuickStartCatalogHeader title="Learning Resources" />
-      <Divider component="div" />
-      <QuickStartCatalogToolbar>
-        <ToolbarContent>
-          <ToolbarItem className="pfext-quick-start-catalog-filter__input">
-            <SearchInput
-              placeholder={'Filter by keyword...'}
-              onChange={(_ev, str) => onSearchInputChange(str)}
-            />
-          </ToolbarItem>
-          <QuickStartCatalogFilterStatusWrapper
-            onStatusChange={onStatusChange}
-          />
-          <QuickStartCatalogFilterCountWrapper
-            quickStartsCount={filteredQuickStarts.length}
-          />
-        </ToolbarContent>
-      </QuickStartCatalogToolbar>
-      <Divider component="div" />
-      {filteredQuickStarts.length === 0 ? (
-        <QuickStartCatalogEmptyState clearFilters={clearFilters} />
-      ) : filteredQuickStarts.length !== allQuickStarts?.length ? (
-        <QuickStartCatalog quickStarts={filteredQuickStarts} />
-      ) : (
-        CatalogWithSections
-      )}
+      <QuickStartCatalogHeader hint="dasd" title="Learning Resources" />
     </>
   );
+
+  // return (
+  //   <>
+  //     <QuickStartCatalogHeader title="Learning Resources" />
+  //     <Divider component="div" />
+  //     <QuickStartCatalogToolbar>
+  //       <ToolbarContent>
+  //         <ToolbarItem className="pfext-quick-start-catalog-filter__input">
+  //           <SearchInput
+  //             placeholder={'Filter by keyword...'}
+  //             onChange={(_ev, str) => onSearchInputChange(str)}
+  //           />
+  //         </ToolbarItem>
+  //         <QuickStartCatalogFilterStatusWrapper
+  //           onStatusChange={onStatusChange}
+  //         />
+  //         <QuickStartCatalogFilterCountWrapper
+  //           quickStartsCount={filteredQuickStarts.length}
+  //         />
+  //       </ToolbarContent>
+  //     </QuickStartCatalogToolbar>
+  //     <Divider component="div" />
+  //     {filteredQuickStarts.length === 0 ? (
+  //       <QuickStartCatalogEmptyState clearFilters={clearFilters} />
+  //     ) : filteredQuickStarts.length !== allQuickStarts?.length ? (
+  //       <QuickStartCatalog quickStarts={filteredQuickStarts} />
+  //     ) : (
+  //       CatalogWithSections
+  //     )}
+  //   </>
+  // );
 };
