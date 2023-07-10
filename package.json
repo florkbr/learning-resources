@@ -15,7 +15,7 @@
     "lint:sass": "stylelint 'src/**/*.scss' --config .stylelintrc.json",
     "patch:hosts": "fec patch-etc-hosts",
     "start": "HOT=true fec dev",
-    "test": "TZ=UTC jest --verbose --no-cache",
+    "test": "TZ=UTC jest --verbose --no-cache --passWithNoTests",
     "verify": "npm-run-all build lint test"
   },
   "dependencies": {
