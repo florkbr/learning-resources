@@ -38,7 +38,7 @@
     "@babel/preset-typescript": "^7.17.12",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "^1.2.6",
     "@redhat-cloud-services/frontend-components-config": "^5.0.0",
-    "@redhat-cloud-services/types": "^0.0.13",
+    "@redhat-cloud-services/types": "^0.0.24",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@types/react": "17.0.39",
