@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './App.scss';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import {
@@ -25,6 +25,7 @@ export const App = ({ bundle }: { bundle: string }) => {
     setFilter,
     loading,
   } = React.useContext<QuickStartContextValues>(QuickStartContext);
+  const [contentReady, setContentReady] = useState(false);
 
   const { documentation, learningPaths, other, quickStarts } = useMemo(() => {
     const filteredQuickStarts = filterQuickStarts(
@@ -72,14 +73,15 @@ export const App = ({ bundle }: { bundle: string }) => {
   useEffect(() => {
     fetch(`/api/quickstarts/v1/quickstarts?bundle=${targetBundle}`)
       .then<{ data: { content: QuickStart }[] }>((response) => response.json())
-      .then(({ data }) =>
+      .then(({ data }) => {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         quickStartsApi.set(
           `${targetBundle}`,
           data.map(({ content }) => content)
-        )
-      )
+        );
+        setContentReady(true);
+      })
       .catch((err) => {
         console.log(err.message);
       });
@@ -89,7 +91,7 @@ export const App = ({ bundle }: { bundle: string }) => {
     setFilter('keyword', searchValue);
   };
 
-  if (loading) {
+  if (!contentReady || loading) {
     return <LoadingBox />;
   }
 

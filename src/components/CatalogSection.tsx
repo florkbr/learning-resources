@@ -6,7 +6,10 @@ import {
 } from '@patternfly/quickstarts';
 import {
   Badge,
+  Button,
   ExpandableSection,
+  Flex,
+  FlexItem,
   Gallery,
   GalleryItem,
   Text,
@@ -14,6 +17,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import React, { PropsWithChildren, useState } from 'react';
+import AngleRightIcon from '@patternfly/react-icons/dist/js/icons/angle-right-icon';
 
 import './CatalogSection.scss';
 import classNames from 'classnames';
@@ -34,17 +38,34 @@ const CatalogSection = ({
   allQuickStartStates?: AllQuickStartStates;
 }>) => {
   const [isExpanded, setIsExpanded] = useState(!!sectionCount);
+
+  // Expandable section does not support disabled sections
+  if (sectionCount === 0) {
+    return (
+      <Flex alignItems={{ default: 'alignItemsCenter' }}>
+        <FlexItem>
+          <Button
+            className="pf-c-expandable-section__toggle"
+            variant="plain"
+            isDisabled
+            icon={<AngleRightIcon />}
+          ></Button>
+        </FlexItem>
+        <FlexItem>
+          <Title headingLevel="h3" size="lg">
+            {sectionTitle}
+            <Badge className="pf-u-ml-sm">{sectionCount}</Badge>
+          </Title>
+        </FlexItem>
+      </Flex>
+    );
+  }
   return (
     <ExpandableSection
-      disabled={sectionCount === 0}
-      isExpanded={sectionCount === 0 ? false : isExpanded}
+      isExpanded={isExpanded}
       isIndented
       onToggle={() => setIsExpanded((prev) => !prev)}
-      className={classNames('lr-c-catalog-section', {
-        disabled: sectionCount === 0,
-      })}
-      tabIndex={sectionCount === 0 ? -1 : undefined}
-      aria-disabled={sectionCount === 0}
+      className="lr-c-catalog-section"
       toggleContent={
         <Title headingLevel="h3" size="lg">
           {sectionTitle}
