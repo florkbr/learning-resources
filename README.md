@@ -4,7 +4,6 @@
 React.js starter app for Red Hat Insights products that includes Patternfly 4 and shared Red Hat cloud service frontend components.
 
 ## Initial etc/hosts setup
-
 In order to access the https://[env].foo.redhat.com in your browser, you have to add entries to your `/etc/hosts` file. This is a **one-time** setup that has to be done only once (unless you modify hosts) on each machine.
 
 To setup the hosts file run following command:
