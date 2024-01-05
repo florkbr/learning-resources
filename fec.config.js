@@ -1,5 +1,5 @@
 module.exports = {
-  appUrl: ['/settings/learning-resources'],
+  appUrl: ['/settings/learning-resources', '/openshift/learning-resources'],
   debug: true,
   useProxy: true,
   proxyVerbose: true,

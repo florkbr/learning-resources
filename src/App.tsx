@@ -44,9 +44,9 @@ export const App = ({ bundle }: { bundle: string }) => {
         if (curr.metadata.externalDocumentation) {
           acc.documentation.push(curr);
         } else if (curr.metadata.otherResource) {
-          other.push(curr);
+          acc.other.push(curr);
         } else if (curr.metadata.learningPath) {
-          learningPaths.push(curr);
+          acc.learningPaths.push(curr);
         } else {
           acc.quickStarts.push(curr);
         }
