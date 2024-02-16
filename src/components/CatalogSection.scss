@@ -9,5 +9,27 @@
   }
   h3 {
     color: var(--pf-global--palette--black-900);
+    span {
+      vertical-align: middle;
+    }
+  }
+
+  .pfext-quick-start-catalog__gallery-item {
+    h3 {
+      color: var(--pf-global--palette--black-900);
+    }
+    .pfext-markdown-view div {
+    
+      display: flex;
+      justify-content: center;
+    
+      button {
+        color: var(--pf-global--primary-color--100);
+      }
+    }
+  }
+
+  & > .pf-v5-l-split {
+    margin-bottom: var(--pf-global--spacer--md);
   }
 }

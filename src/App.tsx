@@ -10,8 +10,10 @@ import {
 } from '@patternfly/quickstarts';
 import {
   Divider,
+  EmptyState,
   PageGroup,
   PageSection,
+  Pagination,
   Sidebar,
   SidebarContent,
   SidebarPanel,
@@ -21,6 +23,8 @@ import CatalogHeader from './components/CatalogHeader';
 import CatalogFilter from './components/CatalogFilter';
 import CatalogSection from './components/CatalogSection';
 import TableOfContents from './components/TableOfContents';
+import { BookmarkIcon, OutlinedBookmarkIcon } from '@patternfly/react-icons';
+import { useFlag } from '@unleash/proxy-client-react';
 
 const sortFnc = (q1: QuickStart, q2: QuickStart) =>
   q1.spec.displayName.localeCompare(q2.spec.displayName);
@@ -34,38 +38,54 @@ export const App = ({ bundle }: { bundle: string }) => {
     setFilter,
     loading,
   } = React.useContext<QuickStartContextValues>(QuickStartContext);
+  const showBookmarks = useFlag('platform.learning-resources.bookmarks');
+  const [pagination, setPagination] = useState({
+    count: 321,
+    perPage: 20,
+    page: 1,
+  });
   const [contentReady, setContentReady] = useState(false);
   const [size, setSize] = useState(window.innerHeight);
 
-  const { documentation, learningPaths, other, quickStarts } = useMemo(() => {
-    const filteredQuickStarts = filterQuickStarts(
-      allQuickStarts || [],
-      filter?.keyword || '',
-      filter?.status?.statusFilters,
-      allQuickStartStates || {}
-    ).sort(sortFnc);
-    return filteredQuickStarts.reduce<{
-      documentation: QuickStart[];
-      quickStarts: QuickStart[];
-      other: QuickStart[];
-      learningPaths: QuickStart[];
-    }>(
-      (acc, curr) => {
-        if (curr.metadata.externalDocumentation) {
-          acc.documentation.push(curr);
-        } else if (curr.metadata.otherResource) {
-          acc.other.push(curr);
-        } else if (curr.metadata.learningPath) {
-          acc.learningPaths.push(curr);
-        } else {
-          acc.quickStarts.push(curr);
-        }
+  const { documentation, learningPaths, other, quickStarts, bookmarks } =
+    useMemo(() => {
+      const filteredQuickStarts = filterQuickStarts(
+        allQuickStarts || [],
+        filter?.keyword || '',
+        filter?.status?.statusFilters,
+        allQuickStartStates || {}
+      ).sort(sortFnc);
+      return filteredQuickStarts.reduce<{
+        bookmarks: QuickStart[];
+        documentation: QuickStart[];
+        quickStarts: QuickStart[];
+        other: QuickStart[];
+        learningPaths: QuickStart[];
+      }>(
+        (acc, curr) => {
+          if (curr.metadata.externalDocumentation) {
+            acc.documentation.push(curr);
+          } else if (curr.metadata.otherResource) {
+            acc.other.push(curr);
+          } else if (curr.metadata.learningPath) {
+            acc.learningPaths.push(curr);
+          } else if (curr.metadata.bookmarks) {
+            acc.bookmarks.push(curr);
+          } else {
+            acc.quickStarts.push(curr);
+          }
 
-        return acc;
-      },
-      { documentation: [], quickStarts: [], other: [], learningPaths: [] }
-    );
-  }, [allQuickStarts, filter]);
+          return acc;
+        },
+        {
+          documentation: [],
+          quickStarts: [],
+          other: [],
+          learningPaths: [],
+          bookmarks: [],
+        }
+      );
+    }, [allQuickStarts, filter]);
 
   const quickStartsCount =
     quickStarts.length +
@@ -141,6 +161,59 @@ export const App = ({ bundle }: { bundle: string }) => {
               id="quick-starts"
               className="pf-u-background-color-200"
             >
+              {showBookmarks && (
+                <React.Fragment>
+                  <CatalogSection
+                    sectionName="bookmarked"
+                    sectionCount={bookmarks.length}
+                    emptyBody={
+                      <EmptyState className="lr-c-empty_bookmarks">
+                        No bookmarked resources yet. Click the{' '}
+                        <OutlinedBookmarkIcon /> icon to pin it to your
+                        bookmarks here.
+                      </EmptyState>
+                    }
+                    sectionTitle={
+                      <span>
+                        <span className="lr-c-header-icon">
+                          <BookmarkIcon />
+                        </span>
+                        Bookmarks
+                      </span>
+                    }
+                    rightTitle={
+                      <Pagination
+                        itemCount={bookmarks.length}
+                        perPage={pagination.perPage}
+                        page={pagination.page}
+                        onSetPage={(_e, perPage) =>
+                          setPagination((pagination) => ({
+                            ...pagination,
+                            perPage,
+                            page: 1,
+                          }))
+                        }
+                        widgetId="pagination-options-menu-top"
+                        onPerPageSelect={(_e, page) =>
+                          setPagination((pagination) => ({
+                            ...pagination,
+                            page,
+                          }))
+                        }
+                        isCompact
+                      />
+                    }
+                    isExpandable={false}
+                    sectionQuickStarts={bookmarks.slice(
+                      (pagination.page - 1) * pagination.perPage,
+                      pagination.page * (pagination.perPage - 1)
+                    )}
+                    activeQuickStartID={activeQuickStartID}
+                    allQuickStartStates={allQuickStartStates}
+                  />
+                  <Divider className="pf-u-mt-lg pf-u-mb-lg" />
+                </React.Fragment>
+              )}
               <CatalogSection
                 sectionName="documentation"
                 sectionCount={documentation.length}
@@ -172,7 +245,7 @@ export const App = ({ bundle }: { bundle: string }) => {
               />
               <Divider className="pf-u-mt-lg pf-u-mb-lg" />
               <CatalogSection
-                sectionName="other-content-types"
+                sectionName="other"
                 sectionCount={other.length}
                 sectionTitle="Other content types"
                 sectionDescription="Tutorials, videos, e-books, and more to help you build your skills"
