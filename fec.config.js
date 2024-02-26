@@ -8,7 +8,7 @@ module.exports = {
    * Change to false after your app is registered in configuration files
    */
   interceptChromeConfig: false,
-  _unstableHotReload: process.env.HOT === 'true',
+  hotReload: true,
   /**
    * Add additional webpack plugins
    */

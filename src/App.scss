@@ -2,11 +2,13 @@
 @import "~@redhat-cloud-services/frontend-components-utilities/styles/_all";
 
 .lr-c-catalog-section {
-  .lr-c-header-icon {
-    padding-right: var(--pf-global--spacer--md);
+  .lr-c-bookmark__icon {
+    &.heading {
+      margin-left: 0;
+    }
     color: var(--pf-global--primary-color--100);
-  }
-  .lr-c-empty_bookmarks svg {
-    color: var(--pf-global--primary-color--100);
+    &:hover {
+      color: var(--pf-global--primary-color--200);
+    }
   }
 }

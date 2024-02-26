@@ -48,6 +48,7 @@ const CatalogWrapper: React.FC<
     children: React.ReactNode;
     isExpandable?: boolean;
     rightTitle?: React.ReactNode;
+    sectionName: string;
   }>
 > = ({
   children,
@@ -55,12 +56,13 @@ const CatalogWrapper: React.FC<
   sectionCount,
   isExpandable = true,
   rightTitle,
+  sectionName,
 }) => {
   const [isExpanded, setIsExpanded] = useState(!!sectionCount);
 
   if (!isExpandable) {
     return (
-      <div className="lr-c-catalog-section">
+      <div className="lr-c-catalog-section" id={sectionName}>
         <Split>
           <SplitItem isFilled>
             <Title headingLevel="h3" size="lg">
@@ -70,7 +72,9 @@ const CatalogWrapper: React.FC<
           </SplitItem>
           <SplitItem>{rightTitle}</SplitItem>
         </Split>
-        {children}
+        {children ? (
+          <div className="lr-c-catalog-section__static">{children}</div>
+        ) : null}
       </div>
     );
   }
@@ -81,6 +85,7 @@ const CatalogWrapper: React.FC<
       isIndented
       onToggle={() => setIsExpanded((prev) => !prev)}
       className="lr-c-catalog-section"
+      id={sectionName}
       toggleContent={
         <Split>
           <SplitItem isFilled>
@@ -111,27 +116,32 @@ const CatalogSection = ({
   rightTitle,
   emptyBody,
   toggleFavorite,
+  sectionName,
 }: PropsWithChildren<{
   sectionTitle: React.ReactNode;
   sectionCount: number;
   sectionQuickStarts: QuickStart[];
-  sectionName: string;
   emptyBody?: React.ReactNode;
   rightTitle?: React.ReactNode;
   sectionDescription?: React.ReactNode;
   isExpandable?: boolean;
   activeQuickStartID?: string;
   allQuickStartStates?: AllQuickStartStates;
+  sectionName: string;
   toggleFavorite: (name: string, favorite: boolean) => Promise<void>;
 }>) => {
   const showBookmarks = useFlag('platform.learning-resources.bookmarks');
   // Expandable section does not support disabled sections
   if (sectionCount === 0 && isExpandable) {
     return (
-      <Flex alignItems={{ default: 'alignItemsCenter' }}>
-        <FlexItem>
+      <Flex
+        alignItems={{ default: 'alignItemsCenter' }}
+        id={sectionName}
+        className="lr-c-catalog-section"
+      >
+        <FlexItem className="pf-v5-u-mr-sm">
           <Button
-            className="pf-c-expandable-section__toggle"
+            className="pf-c-expandable-section__toggle pf-v5-u-pl-0 pf-v5-u-pr-0"
             variant="plain"
             isDisabled
             icon={<AngleRightIcon />}
@@ -141,7 +151,7 @@ const CatalogSection = ({
           <SplitItem isFilled>
             <Title headingLevel="h3" size="lg">
               {sectionTitle}
-              <Badge isRead={!sectionCount} className="pf-u-ml-sm">
+              <Badge isRead={false} className="pf-u-ml-sm">
                 {sectionCount}
               </Badge>
             </Title>
@@ -154,6 +164,7 @@ const CatalogSection = ({
 
   return (
     <CatalogWrapper
+      sectionName={sectionName}
       sectionCount={sectionCount}
       sectionTitle={sectionTitle}
       isExpandable={isExpandable}
@@ -182,7 +193,6 @@ const CatalogSection = ({
                       : OutlinedBookmarkedIcon
                     : undefined,
                   onClick: (e: SyntheticEvent<Element, Event>): void => {
-                    console.log({ showBookmarks });
                     if (showBookmarks) {
                       e.preventDefault();
                       e.stopPropagation();
