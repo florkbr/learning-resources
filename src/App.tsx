@@ -1,17 +1,18 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.scss';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import {
   LoadingBox,
-  QuickStart,
   QuickStartContext,
   QuickStartContextValues,
-  filterQuickStarts,
 } from '@patternfly/quickstarts';
 import {
   Divider,
+  EmptyState,
+  Icon,
   PageGroup,
   PageSection,
+  Pagination,
   Sidebar,
   SidebarContent,
   SidebarPanel,
@@ -21,51 +22,33 @@ import CatalogHeader from './components/CatalogHeader';
 import CatalogFilter from './components/CatalogFilter';
 import CatalogSection from './components/CatalogSection';
 import TableOfContents from './components/TableOfContents';
-
-const sortFnc = (q1: QuickStart, q2: QuickStart) =>
-  q1.spec.displayName.localeCompare(q2.spec.displayName);
+import { BookmarkIcon, OutlinedBookmarkIcon } from '@patternfly/react-icons';
+import { useFlag } from '@unleash/proxy-client-react';
+import useQuickStarts from './hooks/useQuickStarts';
 
 export const App = ({ bundle }: { bundle: string }) => {
-  const {
-    activeQuickStartID,
-    allQuickStartStates,
-    allQuickStarts = [],
-    filter,
-    setFilter,
-    loading,
-  } = React.useContext<QuickStartContextValues>(QuickStartContext);
-  const [contentReady, setContentReady] = useState(false);
+  const chrome = useChrome();
+  const { activeQuickStartID, allQuickStartStates, setFilter, loading } =
+    React.useContext<QuickStartContextValues>(QuickStartContext);
+  const showBookmarks = useFlag('platform.learning-resources.bookmarks');
+
   const [size, setSize] = useState(window.innerHeight);
+  const targetBundle = bundle || 'settings';
 
-  const { documentation, learningPaths, other, quickStarts } = useMemo(() => {
-    const filteredQuickStarts = filterQuickStarts(
-      allQuickStarts || [],
-      filter?.keyword || '',
-      filter?.status?.statusFilters,
-      allQuickStartStates || {}
-    ).sort(sortFnc);
-    return filteredQuickStarts.reduce<{
-      documentation: QuickStart[];
-      quickStarts: QuickStart[];
-      other: QuickStart[];
-      learningPaths: QuickStart[];
-    }>(
-      (acc, curr) => {
-        if (curr.metadata.externalDocumentation) {
-          acc.documentation.push(curr);
-        } else if (curr.metadata.otherResource) {
-          acc.other.push(curr);
-        } else if (curr.metadata.learningPath) {
-          acc.learningPaths.push(curr);
-        } else {
-          acc.quickStarts.push(curr);
-        }
-
-        return acc;
-      },
-      { documentation: [], quickStarts: [], other: [], learningPaths: [] }
-    );
-  }, [allQuickStarts, filter]);
+  const {
+    contentReady,
+    documentation,
+    learningPaths,
+    other,
+    quickStarts,
+    bookmarks,
+    toggleFavorite,
+  } = useQuickStarts(targetBundle);
+  const [pagination, setPagination] = useState({
+    count: bookmarks.length,
+    perPage: 20,
+    page: 1,
+  });
 
   const quickStartsCount =
     quickStarts.length +
@@ -73,31 +56,9 @@ export const App = ({ bundle }: { bundle: string }) => {
     learningPaths.length +
     other.length;
 
-  const chrome = useChrome();
-
-  const { quickStarts: quickStartsApi } = chrome;
-  const targetBundle = bundle || 'settings';
-
-  chrome?.updateDocumentTitle?.('Learning Resources');
+  chrome.updateDocumentTitle('Learning Resources');
   useEffect(() => {
-    chrome?.hideGlobalFilter?.(true);
-  }, []);
-
-  useEffect(() => {
-    fetch(`/api/quickstarts/v1/quickstarts?bundle=${targetBundle}`)
-      .then<{ data: { content: QuickStart }[] }>((response) => response.json())
-      .then(({ data }) => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        quickStartsApi.set(
-          `${targetBundle}`,
-          data.map(({ content }) => content)
-        );
-        setContentReady(true);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
+    chrome.hideGlobalFilter(true);
   }, []);
 
   const onSearchInputChange = (searchValue: string) => {
@@ -141,8 +102,64 @@ export const App = ({ bundle }: { bundle: string }) => {
               id="quick-starts"
               className="pf-u-background-color-200"
             >
+              {showBookmarks && (
+                <React.Fragment>
+                  <CatalogSection
+                    sectionName="bookmarks"
+                    toggleFavorite={toggleFavorite}
+                    sectionCount={bookmarks.length}
+                    emptyBody={
+                      <EmptyState className="lr-c-empty_bookmarks">
+                        No bookmarked resources yet. Click the{' '}
+                        <Icon className="lr-c-bookmark__icon">
+                          <OutlinedBookmarkIcon />
+                        </Icon>
+                        icon to pin it to your bookmarks here.
+                      </EmptyState>
+                    }
+                    sectionTitle={
+                      <span>
+                        <Icon className="lr-c-bookmark__icon pf-v5-u-ml-sm pf-v5-u-pr-md">
+                          <BookmarkIcon />
+                        </Icon>
+                        Bookmarks
+                      </span>
+                    }
+                    rightTitle={
+                      <Pagination
+                        itemCount={bookmarks.length}
+                        perPage={pagination.perPage}
+                        page={pagination.page}
+                        onSetPage={(_e, newPage) => {
+                          setPagination((pagination) => ({
+                            ...pagination,
+                            page: newPage,
+                          }));
+                        }}
+                        widgetId="pagination-options-menu-top"
+                        onPerPageSelect={(_e, perPage) =>
+                          setPagination((pagination) => ({
+                            ...pagination,
+                            perPage,
+                          }))
+                        }
+                        isCompact
+                      />
+                    }
+                    isExpandable={false}
+                    sectionQuickStarts={bookmarks.slice(
+                      (pagination.page - 1) * pagination.perPage,
+                      pagination.page * (pagination.perPage - 1) + 1
+                    )}
+                    activeQuickStartID={activeQuickStartID}
+                    allQuickStartStates={allQuickStartStates}
+                  />
+                  <Divider className="pf-u-mt-lg pf-u-mb-lg" />
+                </React.Fragment>
+              )}
               <CatalogSection
                 sectionName="documentation"
+                toggleFavorite={toggleFavorite}
                 sectionCount={documentation.length}
                 sectionTitle="Documentation"
                 sectionDescription="Technical information for using the service"
@@ -153,6 +170,7 @@ export const App = ({ bundle }: { bundle: string }) => {
               <Divider className="pf-u-mt-lg pf-u-mb-lg" />
               <CatalogSection
                 sectionName="quick-starts"
+                toggleFavorite={toggleFavorite}
                 sectionCount={quickStarts.length}
                 sectionTitle="Quick starts"
                 sectionDescription="Step-by-step instructions and tasks"
@@ -163,6 +181,7 @@ export const App = ({ bundle }: { bundle: string }) => {
               <Divider className="pf-u-mt-lg pf-u-mb-lg" />
               <CatalogSection
                 sectionName="learning-paths"
+                toggleFavorite={toggleFavorite}
                 sectionCount={learningPaths.length}
                 sectionTitle="Learning paths"
                 sectionDescription="Collections of learning materials contributing to a common use case"
@@ -173,6 +192,7 @@ export const App = ({ bundle }: { bundle: string }) => {
               <Divider className="pf-u-mt-lg pf-u-mb-lg" />
               <CatalogSection
                 sectionName="other-content-types"
+                toggleFavorite={toggleFavorite}
                 sectionCount={other.length}
                 sectionTitle="Other content types"
                 sectionDescription="Tutorials, videos, e-books, and more to help you build your skills"
@@ -186,8 +206,12 @@ export const App = ({ bundle }: { bundle: string }) => {
               className="pf-u-background-color-200 pf-u-pl-lg pf-u-pl-0-on-lg"
             >
               <TableOfContents
-                defaultActive="documentation"
+                defaultActive="bookmarks"
                 linkItems={[
+                  {
+                    id: 'bookmarks',
+                    label: `Bookmarks (${bookmarks.length})`,
+                  },
                   {
                     id: 'documentation',
                     label: `Documentation (${documentation.length})`,

@@ -5,8 +5,8 @@ import React from 'react';
 import './CatalogFilter.scss';
 
 const CatalogFilter = ({
-  quickStartsCount,
   onSearchInputChange,
+  quickStartsCount,
 }: {
   onSearchInputChange: (value: string) => void;
   quickStartsCount: number;
