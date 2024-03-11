@@ -31,11 +31,7 @@ export const App = ({ bundle }: { bundle: string }) => {
   const { activeQuickStartID, allQuickStartStates, setFilter, loading } =
     React.useContext<QuickStartContextValues>(QuickStartContext);
   const showBookmarks = useFlag('platform.learning-resources.bookmarks');
-  const [pagination, setPagination] = useState({
-    count: 321,
-    perPage: 20,
-    page: 1,
-  });
+
   const [size, setSize] = useState(window.innerHeight);
   const targetBundle = bundle || 'settings';
 
@@ -48,6 +44,11 @@ export const App = ({ bundle }: { bundle: string }) => {
     bookmarks,
     toggleFavorite,
   } = useQuickStarts(targetBundle);
+  const [pagination, setPagination] = useState({
+    count: bookmarks.length,
+    perPage: 20,
+    page: 1,
+  });
 
   const quickStartsCount =
     quickStarts.length +
@@ -129,18 +130,17 @@ export const App = ({ bundle }: { bundle: string }) => {
                         itemCount={bookmarks.length}
                         perPage={pagination.perPage}
                         page={pagination.page}
-                        onSetPage={(_e, perPage) =>
+                        onSetPage={(_e, newPage) => {
+                          setPagination((pagination) => ({
+                            ...pagination,
+                            page: newPage,
+                          }));
+                        }}
+                        widgetId="pagination-options-menu-top"
+                        onPerPageSelect={(_e, perPage) =>
                           setPagination((pagination) => ({
                             ...pagination,
                             perPage,
-                            page: 1,
-                          }))
-                        }
-                        widgetId="pagination-options-menu-top"
-                        onPerPageSelect={(_e, page) =>
-                          setPagination((pagination) => ({
-                            ...pagination,
-                            page,
                           }))
                         }
                         isCompact
@@ -149,7 +149,7 @@ export const App = ({ bundle }: { bundle: string }) => {
                     isExpandable={false}
                     sectionQuickStarts={bookmarks.slice(
                       (pagination.page - 1) * pagination.perPage,
-                      pagination.page * (pagination.perPage - 1)
+                      pagination.page * (pagination.perPage - 1) + 1
                     )}
                     activeQuickStartID={activeQuickStartID}
                     allQuickStartStates={allQuickStartStates}
