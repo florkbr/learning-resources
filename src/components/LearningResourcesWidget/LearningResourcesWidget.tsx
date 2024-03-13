@@ -41,7 +41,7 @@ const LearningResourcesWidget: React.FunctionComponent = () => {
   console.log(bookmarks);
 
   return (
-    <div>
+    <div className="widgetLearning">
       {quickStarts.length > 0 ? (
         <LearningResourcesEmptyState />
       ) : (
