@@ -24,7 +24,7 @@ function isFavorite(quickStart: QuickStart, favorites: FavoriteQuickStart[]) {
   return !!favorites.find((f) => f.quickstartName === quickStart.metadata.name);
 }
 
-const useQuickStarts = (targetBundle: string) => {
+const useQuickStarts = (targetBundle?: string) => {
   const chrome = useChrome();
   const { quickStarts: quickStartsApi } = chrome;
   const [contentReady, setContentReady] = useState(false);
@@ -90,16 +90,23 @@ const useQuickStarts = (targetBundle: string) => {
     }
 
     const account = user.identity.internal?.account_id;
+
     const contentPromise = axios
       .get<{ data: { content: QuickStart }[] }>(
         `${API_BASE}/${QUICKSTARTS}?bundle=${targetBundle}`
       )
       .then(({ data }) => {
-        quickStartsApi.set(
-          `${targetBundle}`,
-          data.data.map(({ content }) => content)
-        );
+        targetBundle
+          ? quickStartsApi.set(
+              `${targetBundle}`,
+              data.data.map(({ content }) => content)
+            )
+          : quickStartsApi.set(
+              `${account}`,
+              data.data.map(({ content }) => content)
+            );
       });
+
     const favoritesPromise = account
       ? axios
           .get<{ data: FavoriteQuickStart[] }>(
