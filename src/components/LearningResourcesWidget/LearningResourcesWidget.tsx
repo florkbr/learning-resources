@@ -37,16 +37,15 @@ const LinkWrapper = ({
 };
 
 const LearningResourcesWidget: React.FunctionComponent = () => {
-  const { quickStarts, bookmarks } = useQuickStarts();
-  console.log(bookmarks);
+  const { bookmarks } = useQuickStarts();
 
   return (
-    <div className="widgetLearning">
-      {quickStarts.length > 0 ? (
+    <div className="widget-learning-resources">
+      {bookmarks.length === 0 ? (
         <LearningResourcesEmptyState />
       ) : (
         <Gallery hasGutter>
-          {quickStarts.map(({ metadata, spec }, index) => (
+          {bookmarks.map(({ metadata, spec }, index) => (
             <div key={index}>
               <TextContent>
                 <LinkWrapper
@@ -59,12 +58,7 @@ const LearningResourcesWidget: React.FunctionComponent = () => {
                   style={{ marginRight: 'var(--pf-v5-global--spacer--sm)' }}
                 >
                   {spec.type && (
-                    <Label
-                      className="pfext-quick-start-tile-header--margin"
-                      color={spec.type.color}
-                    >
-                      {spec.type.text}
-                    </Label>
+                    <Label color={spec.type.color}>{spec.type.text}</Label>
                   )}
                 </FlexItem>
                 <FlexItem>

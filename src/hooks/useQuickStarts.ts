@@ -91,10 +91,12 @@ const useQuickStarts = (targetBundle?: string) => {
 
     const account = user.identity.internal?.account_id;
 
+    const quickstartsPath = targetBundle
+      ? `${API_BASE}/${QUICKSTARTS}?bundle=${targetBundle}`
+      : `${API_BASE}/${QUICKSTARTS}?account=${account}`;
+
     const contentPromise = axios
-      .get<{ data: { content: QuickStart }[] }>(
-        `${API_BASE}/${QUICKSTARTS}?bundle=${targetBundle}`
-      )
+      .get<{ data: { content: QuickStart }[] }>(quickstartsPath)
       .then(({ data }) => {
         targetBundle
           ? quickStartsApi.set(
