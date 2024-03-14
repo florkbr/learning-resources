@@ -13,15 +13,4 @@ module.exports = {
    * Add additional webpack plugins
    */
   plugins: [],
-  moduleFederation: {
-    exposes: {
-      './RootApp': path.resolve(__dirname, './src/AppEntry.tsx'),
-      './LearningResourcesWidget': path.resolve(__dirname, './src/components/LearningResourcesWidget/LearningResourcesWdiget.tsx'),
-    },
-    shared: [
-      {
-        'react-router-dom': { singleton: true, requiredVersion: '*' },
-      },
-    ],
-  }
 };
