@@ -17,6 +17,7 @@
       "resolveJsonModule": true,
       "types": ["node", "jest", "@testing-library/jest-dom"],
   },
+  "files": ["globals.d.ts"],
   "include": [
       "src/**/*.ts",
       "src/**/*.tsx",
