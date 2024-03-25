@@ -1,5 +1,4 @@
 const path = require('path');
-const dependencies = require('./package.json').dependencies;
 
 module.exports = {
   appUrl: ['/settings/learning-resources', '/openshift/learning-resources'],
@@ -29,7 +28,7 @@ module.exports = {
       {
         'react-router-dom': {
           singleton: true,
-          requiredVersion: '*',
+          version: '*',
         },
       },
     ],
