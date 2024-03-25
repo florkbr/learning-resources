@@ -19,7 +19,7 @@ module.exports = {
   moduleFederation: {
     exposes: {
       './RootApp': path.resolve(__dirname, './src/AppEntry.tsx'),
-      './BookmarkedLearninResourcesWidget': path.resolve(
+      './BookmarkedLearningResourcesWidget': path.resolve(
         __dirname,
         './src/components/LearningResourcesWidget/LearningResourcesWidget'
       ),
@@ -29,7 +29,7 @@ module.exports = {
       {
         'react-router-dom': {
           singleton: true,
-          version: dependencies['react-router-dom'],
+          requiredVersion: '*',
         },
       },
     ],
