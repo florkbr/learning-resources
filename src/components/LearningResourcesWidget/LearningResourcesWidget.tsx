@@ -44,7 +44,7 @@ const LearningResourcesWidget: React.FunctionComponent = () => {
   };
 
   return (
-    <div className="widget-learning-resources">
+    <div>
       {bookmarks.length === 0 ? (
         <LearningResourcesEmptyState />
       ) : (
