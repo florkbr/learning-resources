@@ -39,13 +39,17 @@ const LinkWrapper = ({
 const LearningResourcesWidget: React.FunctionComponent = () => {
   const { bookmarks } = useQuickStarts();
 
+  const getPathName = (url: string) => {
+    return new URL(url).host;
+  };
+
   return (
     <div className="widget-learning-resources">
       {bookmarks.length === 0 ? (
         <LearningResourcesEmptyState />
       ) : (
         <Gallery className="widget-learning-resources pf-v5-u-p-md" hasGutter>
-          {bookmarks.map(({ metadata, spec }, index) => (
+          {bookmarks.map(({ spec }, index) => (
             <div key={index}>
               <TextContent>
                 <LinkWrapper
@@ -62,7 +66,7 @@ const LearningResourcesWidget: React.FunctionComponent = () => {
                 <FlexItem>
                   <TextContent>
                     <Text component={TextVariants.small}>
-                      {metadata.namespace}
+                      {spec.link?.href ? getPathName(spec.link?.href) : ''}
                     </Text>
                   </TextContent>
                 </FlexItem>
