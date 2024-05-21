@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import {
   Text,
   TextContent,
@@ -20,6 +20,7 @@ import {
 import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-link-alt-icon';
 
 import './LearningResourcesWidget.scss';
+import { QuickStart } from '@patternfly/quickstarts';
 
 export const API_BASE = '/api/quickstarts/v1';
 export const QUICKSTARTS = '/quickstarts';
@@ -45,62 +46,95 @@ const LinkWrapper = ({
   );
 };
 
-const LearningResourcesWidget: React.FunctionComponent = () => {
-  const { bookmarks, contentReady } = useQuickStarts('settings');
-
+const LearningResourcesWidget: React.FunctionComponent<{
+  bookmarks: QuickStart[];
+}> = ({ bookmarks }) => {
   const getPathName = (url: string) => {
     return new URL(url).host;
   };
 
   return (
     <div>
-      {contentReady ? (
-        bookmarks.length === 0 ? (
-          <LearningResourcesEmptyState />
-        ) : (
-          <Gallery className="widget-learning-resources pf-v5-u-p-md" hasGutter>
-            {bookmarks.map(({ spec, metadata }, index) => (
-              <div key={index}>
-                <TextContent>
-                  {metadata.externalDocumentation ? (
-                    <a href={spec.link?.href} target="_blank" rel="noreferrer">
-                      {spec.displayName}
-                      <Icon className="pf-v5-u-ml-sm" isInline>
-                        <ExternalLinkAltIcon />
-                      </Icon>
-                    </a>
-                  ) : (
-                    <LinkWrapper
-                      title={spec.displayName}
-                      pathname={spec.link?.href || ''}
-                    />
-                  )}
-                </TextContent>
-                <Flex direction={{ default: 'row' }}>
-                  <FlexItem className="pf-v5-u-mr-sm">
-                    {spec.type && (
-                      <Label color={spec.type.color}>{spec.type.text}</Label>
-                    )}
-                  </FlexItem>
-                  <FlexItem>
-                    <TextContent>
-                      <Text component={TextVariants.small}>
-                        {spec.link?.href ? getPathName(spec.link?.href) : ''}
-                      </Text>
-                    </TextContent>
-                  </FlexItem>
-                </Flex>
-              </div>
-            ))}
-          </Gallery>
-        )
+      {bookmarks.length === 0 ? (
+        <LearningResourcesEmptyState />
       ) : (
-        <Bullseye>
-          <Spinner />
-        </Bullseye>
+        <Gallery className="widget-learning-resources pf-v5-u-p-md" hasGutter>
+          {bookmarks.map(({ spec, metadata }, index) => (
+            <div key={index}>
+              <TextContent>
+                {metadata.externalDocumentation ? (
+                  <a href={spec.link?.href} target="_blank" rel="noreferrer">
+                    {spec.displayName}
+                    <Icon className="pf-v5-u-ml-sm" isInline>
+                      <ExternalLinkAltIcon />
+                    </Icon>
+                  </a>
+                ) : (
+                  <LinkWrapper
+                    title={spec.displayName}
+                    pathname={spec.link?.href || ''}
+                  />
+                )}
+              </TextContent>
+              <Flex direction={{ default: 'row' }}>
+                <FlexItem className="pf-v5-u-mr-sm">
+                  {spec.type && (
+                    <Label color={spec.type.color}>{spec.type.text}</Label>
+                  )}
+                </FlexItem>
+                <FlexItem>
+                  <TextContent>
+                    <Text component={TextVariants.small}>
+                      {spec.link?.href ? getPathName(spec.link?.href) : ''}
+                    </Text>
+                  </TextContent>
+                </FlexItem>
+              </Flex>
+            </div>
+          ))}
+        </Gallery>
       )}
     </div>
   );
 };
 
-export default LearningResourcesWidget;
+const GetFavorites = ({
+  onContentReady,
+  bundle,
+}: {
+  bundle: string;
+  onContentReady: (data: QuickStart[]) => void;
+}) => {
+  const { bookmarks, contentReady } = useQuickStarts(bundle);
+  useEffect(() => {
+    if (contentReady) {
+      onContentReady(bookmarks);
+    }
+  }, [contentReady]);
+  return null;
+};
+
+const LearningResourcesWidgetWrapper = () => {
+  const { getAvailableBundles } = useChrome();
+  const [allFavorites, setAllFavorites] = useState<QuickStart[][]>([]);
+  return (
+    <Fragment>
+      {getAvailableBundles().map(({ id }, index) => (
+        <GetFavorites
+          bundle={id}
+          key={index}
+          onContentReady={(data) => setAllFavorites((prev) => [...prev, data])}
+        />
+      ))}
+      {allFavorites.length !== getAvailableBundles().length ? (
+        <Bullseye>
+          <Spinner />
+        </Bullseye>
+      ) : (
+        <LearningResourcesWidget bookmarks={allFavorites.flat()} />
+      )}
+    </Fragment>
+  );
+};
+
+export default LearningResourcesWidgetWrapper;
