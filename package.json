@@ -20,15 +20,15 @@
     "postinstall": "ts-patch install"
   },
   "dependencies": {
-    "@data-driven-forms/pf4-component-mapper": "^3.23.0",
-    "@data-driven-forms/react-form-renderer": "^3.23.0",
+    "@data-driven-forms/pf4-component-mapper": "^3.23.3",
+    "@data-driven-forms/react-form-renderer": "^3.23.3",
     "@patternfly/quickstarts": "^5.4.0-prerelease.1",
     "@patternfly/react-code-editor": "^5.3.4",
     "@patternfly/react-core": "^5.3.4",
     "@patternfly/react-table": "^5.1.1",
     "@redhat-cloud-services/frontend-components": "^4.2.9",
     "@redhat-cloud-services/frontend-components-notifications": "^4.0.4",
-    "@redhat-cloud-services/frontend-components-utilities": "^4.0.2",
+    "@redhat-cloud-services/frontend-components-utilities": "^4.0.14",
     "@redhat-cloud-services/types": "^1.0.9",
     "@unleash/proxy-client-react": "^4.1.2",
     "axios": "^1.6.7",
