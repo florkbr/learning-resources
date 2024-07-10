@@ -6,11 +6,6 @@ module.exports = {
   useProxy: true,
   proxyVerbose: true,
   sassPrefix: '.learning-resources, .learningResources',
-  routes: {
-    "/api/chrome-service/v1/static/": {
-      "host": "http://localhost:8000"
-    },
-  },
   /**
    * Change to false after your app is registered in configuration files
    */
