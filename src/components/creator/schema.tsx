@@ -234,7 +234,7 @@ export function makeSchema(chrome: ChromeAPI): Schema {
         title: 'Select content type',
         fields: [
           {
-            component: componentTypes.SELECT,
+            component: componentTypes.RADIO,
             name: NAME_KIND,
             label: 'Type',
             simpleValue: true,
