@@ -1,7 +1,9 @@
 import {
-  Button,
   ClipboardCopy,
   ClipboardCopyVariant,
+  Stack,
+  StackItem,
+  Text,
 } from '@patternfly/react-core';
 import DownloadIcon from '@patternfly/react-icons/dist/dynamic/icons/download-icon';
 import React, { useContext, useEffect, useMemo } from 'react';
@@ -31,6 +33,7 @@ import {
 } from './schema';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { downloadFile } from '@redhat-cloud-services/frontend-components-utilities/helpers';
+import SimpleButton from '../SimpleButton';
 
 export type TaskState = {
   title: string;
@@ -193,36 +196,50 @@ const FileDownload = () => {
 
   return (
     <div>
-      Download these files.
-      {files.map((file) => (
-        <div key={file.name}>
-          <Button
-            variant="secondary"
-            icon={<DownloadIcon />}
-            onClick={() => {
-              const dotIndex = file.name.lastIndexOf('.');
-              const baseName =
-                dotIndex !== -1 ? file.name.substring(0, dotIndex) : file.name;
-              const extension =
-                dotIndex !== -1 ? file.name.substring(dotIndex + 1) : 'txt';
+      <Stack hasGutter>
+        <StackItem>
+          <Text>
+            Download these files and use them to create the learning resource PR
+            in the{' '}
+            <a href="https://github.com/RedHatInsights/quickstarts/tree/main/docs/quickstarts">
+              correct repo
+            </a>
+            .
+          </Text>
+        </StackItem>
 
-              downloadFile(file.content, baseName, extension);
-            }}
-          >
-            {file.name}
-          </Button>
+        {files.map((file) => (
+          <StackItem key={file.name}>
+            <SimpleButton
+              icon={<DownloadIcon />}
+              className="pf-v5-u-mb-sm"
+              onClick={() => {
+                const dotIndex = file.name.lastIndexOf('.');
+                const baseName =
+                  dotIndex !== -1
+                    ? file.name.substring(0, dotIndex)
+                    : file.name;
+                const extension =
+                  dotIndex !== -1 ? file.name.substring(dotIndex + 1) : 'txt';
 
-          <ClipboardCopy
-            isCode
-            isReadOnly
-            variant={ClipboardCopyVariant.expansion}
-            hoverTip="Copy"
-            clickTip="Copied"
-          >
-            {file.content}
-          </ClipboardCopy>
-        </div>
-      ))}
+                downloadFile(file.content, baseName, extension);
+              }}
+            >
+              {file.name}
+            </SimpleButton>
+
+            <ClipboardCopy
+              isCode
+              isReadOnly
+              variant={ClipboardCopyVariant.expansion}
+              hoverTip="Copy"
+              clickTip="Copied"
+            >
+              {file.content}
+            </ClipboardCopy>
+          </StackItem>
+        ))}
+      </Stack>
     </div>
   );
 };
