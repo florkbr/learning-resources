@@ -179,7 +179,10 @@ function makeDetailsStep(kind: ItemKind, bundles: Bundles) {
 const MAX_TASKS = 10;
 
 export const NAME_TASKS_ARRAY = 'tasks';
-export const NAME_TASK_CONTENT = 'content';
+export const NAME_TASK_DESCRIPTION = 'description';
+export const NAME_TASK_ENABLE_WORK_CHECK = 'enable_work_check';
+export const NAME_TASK_WORK_CHECK_INSTRUCTIONS = 'work_check_instructions';
+export const NAME_TASK_WORK_CHECK_HELP = 'work_check_help';
 
 const TASK_STEP_PREFIX = 'step-task-detail-';
 
@@ -196,6 +199,13 @@ export function taskFromStepName(name: string): number | null {
 }
 
 function makeTaskStep(index: number) {
+  const taskName = `${NAME_TASKS_ARRAY}[${index}]`;
+
+  const workCheckEnabledCondition = {
+    when: `${taskName}.${NAME_TASK_ENABLE_WORK_CHECK}`,
+    is: true,
+  };
+
   return {
     name: taskStepName(index),
     title: `Task ${index + 1}`,
@@ -203,14 +213,30 @@ function makeTaskStep(index: number) {
     fields: [
       {
         component: componentTypes.TEXTAREA,
-        name: `${NAME_TASKS_ARRAY}[${index}].${NAME_TASK_CONTENT}`,
-        label: 'Task data (YAML)',
+        name: `${taskName}.${NAME_TASK_DESCRIPTION}`,
+        label: 'Description',
+        description: 'Add the content for this step of the panel.',
         resizeOrientation: 'vertical',
       },
       {
-        component: 'lr-task-error',
-        name: `internal-task-errors[${index}]`,
-        index: index,
+        component: componentTypes.CHECKBOX,
+        name: `${taskName}.${NAME_TASK_ENABLE_WORK_CHECK}`,
+        label: "Show 'Work check' section",
+      },
+      {
+        component: componentTypes.TEXTAREA,
+        name: `${taskName}.${NAME_TASK_WORK_CHECK_INSTRUCTIONS}`,
+        condition: workCheckEnabledCondition,
+        label: 'Work check instructions',
+        description: "Add the content to display in the 'Check your work box.",
+        resizeOrientation: 'vertical',
+      },
+      {
+        component: componentTypes.TEXT_FIELD,
+        name: `${taskName}.${NAME_TASK_WORK_CHECK_HELP}`,
+        condition: workCheckEnabledCondition,
+        label: 'Optional failure message',
+        placeholder: 'Try completing the task again',
       },
     ],
     nextStep: ({ values }: WizardNextStepFunctionArgument) => {

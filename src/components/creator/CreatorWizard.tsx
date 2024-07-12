@@ -9,8 +9,7 @@ import {
 import DownloadIcon from '@patternfly/react-icons/dist/dynamic/icons/download-icon';
 import React, { useContext, useEffect, useMemo } from 'react';
 import { ItemKind, isItemKind, metaForKind } from './meta';
-import { CreatorErrors } from '../../Creator';
-import { QuickStartSpec } from '@patternfly/quickstarts';
+import { QuickStartSpec, QuickStartTask } from '@patternfly/quickstarts';
 import {
   AnyObject,
   FormRenderer,
@@ -37,29 +36,17 @@ import { downloadFile } from '@redhat-cloud-services/frontend-components-utiliti
 import SimpleButton from '../SimpleButton';
 import DdfNumberInput from '../DdfNumberInput';
 
-export type TaskState = {
-  title: string;
-  yamlContent: string;
-};
-
-export const EMPTY_TASK: TaskState = {
-  title: '',
-  yamlContent: '',
-};
-
 type CreatorFiles = {
   name: string;
   content: string;
 }[];
 
-type CreatorWizardProps = {
+export type CreatorWizardProps = {
   onChangeKind: (newKind: ItemKind | null) => void;
   onChangeQuickStartSpec: (newValue: QuickStartSpec) => void;
   onChangeBundles: (newValue: string[]) => void;
-  onChangeTaskContents: (contents: string[]) => void;
   onChangeCurrentTask: (index: number | null) => void;
   files: CreatorFiles;
-  errors: CreatorErrors;
 };
 
 type FormValue = AnyObject;
@@ -69,17 +56,24 @@ type UpdaterProps = {
   onChangeKind: (newKind: ItemKind | null) => void;
   onChangeBundles: (bundles: string[]) => void;
   onChangeQuickStartSpec: (newValue: QuickStartSpec) => void;
-  onChangeTaskContents: (contents: string[]) => void;
 };
 
 const DEFAULT_TASK_TITLES: string[] = [''];
+
+export const EMPTY_TASK: QuickStartTask = {};
+
+type FormTaskValue = {
+  description?: string;
+  enable_work_check?: boolean;
+  work_check_instructions?: string;
+  work_check_help?: string;
+};
 
 const PropUpdater = ({
   values,
   onChangeKind,
   onChangeBundles,
   onChangeQuickStartSpec,
-  onChangeTaskContents,
 }: UpdaterProps) => {
   const bundles = values[NAME_BUNDLES];
 
@@ -96,8 +90,7 @@ const PropUpdater = ({
   const introduction: string | undefined = values[NAME_PANEL_INTRODUCTION];
 
   const taskTitles: string[] = values[NAME_TASK_TITLES] ?? DEFAULT_TASK_TITLES;
-  const taskValues: { content: string | undefined }[] | undefined =
-    values[NAME_TASKS_ARRAY];
+  const taskValues: FormTaskValue[] | undefined = values[NAME_TASKS_ARRAY];
 
   const kind =
     typeof rawKind === 'string' && isItemKind(rawKind) ? rawKind : null;
@@ -108,18 +101,28 @@ const PropUpdater = ({
     onChangeKind(kind);
   }, [kind]);
 
-  const taskContents = useMemo(() => {
-    if (meta?.hasTasks !== true) {
-      return [];
+  const effectiveTasks = useMemo(() => {
+    if (meta?.hasTasks !== true) return undefined;
+
+    const out: QuickStartTask[] = [];
+
+    // The task titles array determines how many tasks there should be.
+    for (let i = 0; i < taskTitles.length; ++i) {
+      const taskValue = taskValues?.[i];
+
+      out.push({
+        title: taskTitles[i],
+        description: taskValue?.description ?? '',
+        review: taskValue?.enable_work_check
+          ? {
+              instructions: taskValue?.work_check_instructions,
+              failedTaskHelp: taskValue?.work_check_help,
+            } ?? ''
+          : undefined,
+      });
     }
 
-    const effective = [];
-
-    for (let i = 0; i < (taskTitles?.length ?? 0); ++i) {
-      effective.push(taskValues?.[i]?.content ?? '');
-    }
-
-    return effective;
+    return out;
   }, [meta, taskTitles, taskValues]);
 
   useEffect(() => {
@@ -147,11 +150,10 @@ const PropUpdater = ({
           : undefined,
       prerequisites: meta?.hasTasks === true ? prerequisites : undefined,
       introduction: meta?.hasTasks === true ? introduction : undefined,
-      tasks:
-        meta?.hasTasks === true
-          ? (taskTitles ?? []).map((t) => ({ title: t }))
-          : undefined,
+      tasks: effectiveTasks,
     });
+
+    onChangeKind(kind);
   }, [
     meta,
     rawKind,
@@ -161,37 +163,20 @@ const PropUpdater = ({
     duration,
     prerequisites,
     introduction,
-    taskTitles,
+    effectiveTasks,
   ]);
-
-  useEffect(() => {
-    onChangeTaskContents(taskContents);
-  }, [taskContents]);
 
   // Allow use as JSX component
   return undefined;
 };
 
 const CreatorWizardContext = React.createContext<{
-  errors: CreatorErrors;
   files: CreatorFiles;
   onChangeCurrentTask: (index: number | null) => void;
 }>({
-  errors: {
-    taskErrors: new Map(),
-  },
   files: [],
   onChangeCurrentTask: () => {},
 });
-
-const TaskErrorPreview = ({ index }: { index: number }) => {
-  const context = useContext(CreatorWizardContext);
-  const error = context.errors.taskErrors.get(index);
-
-  return error !== undefined ? (
-    <pre style={{ whiteSpace: 'pre-wrap' }}>{error}</pre>
-  ) : undefined;
-};
 
 const FileDownload = () => {
   const { files } = useContext(CreatorWizardContext);
@@ -275,27 +260,23 @@ const CreatorWizard = ({
   onChangeKind,
   onChangeQuickStartSpec,
   onChangeBundles,
-  onChangeTaskContents,
   onChangeCurrentTask,
   files,
-  errors,
 }: CreatorWizardProps) => {
   const chrome = useChrome();
   const schema = useMemo(() => makeSchema(chrome), []);
 
   const context = useMemo(
     () => ({
-      errors,
       files,
       onChangeCurrentTask,
     }),
-    [errors, files]
+    [files, onChangeCurrentTask]
   );
 
   const componentMapper = {
     ...pf4ComponentMapper,
     'lr-number-input': DdfNumberInput,
-    'lr-task-error': TaskErrorPreview,
     'lr-download-files': FileDownload,
     'lr-wizard-spy': WizardSpy,
   };
@@ -328,7 +309,6 @@ const CreatorWizard = ({
                   onChangeKind={onChangeKind}
                   onChangeBundles={onChangeBundles}
                   onChangeQuickStartSpec={onChangeQuickStartSpec}
-                  onChangeTaskContents={onChangeTaskContents}
                 />
               )}
             </FormSpy>

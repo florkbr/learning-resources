@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import YAML, { YAMLError } from 'yaml';
+import YAML from 'yaml';
 import {
   Grid,
   GridItem,
@@ -7,11 +7,7 @@ import {
   PageSection,
   Title,
 } from '@patternfly/react-core';
-import {
-  QuickStart,
-  QuickStartSpec,
-  QuickStartTask,
-} from '@patternfly/quickstarts';
+import { QuickStart, QuickStartSpec } from '@patternfly/quickstarts';
 import CreatorWizard, { EMPTY_TASK } from './components/creator/CreatorWizard';
 import { ItemKind, metaForKind } from './components/creator/meta';
 import CreatorPreview from './components/creator/CreatorPreview';
@@ -26,53 +22,18 @@ const BASE_METADATA = {
 
 function makeDemoQuickStart(
   kind: ItemKind | null,
-  baseQuickStart: QuickStart,
-  taskContents: string[]
-): [QuickStart, CreatorErrors] {
+  baseQuickStart: QuickStart
+): QuickStart {
   const kindMeta = kind !== null ? metaForKind(kind) : null;
 
-  const [tasks, taskErrors] = (() => {
-    if (kindMeta?.hasTasks !== true) return [undefined, new Map()];
-
-    const out: QuickStartTask[] = [];
-    const errors: CreatorErrors['taskErrors'] = new Map();
-
-    if (baseQuickStart.spec.tasks !== undefined) {
-      for (let index = 0; index < baseQuickStart.spec.tasks.length; ++index) {
-        const task = baseQuickStart.spec.tasks[index];
-
-        try {
-          out.push({
-            ...YAML.parse(taskContents[index]),
-            title: task.title,
-          });
-        } catch (e) {
-          if (!(e instanceof YAMLError)) throw e;
-
-          out.push({ ...EMPTY_TASK, title: task.title });
-          errors.set(index, e.message);
-        }
-      }
-    }
-
-    return [out, errors];
-  })();
-
-  return [
-    {
-      ...baseQuickStart,
-      metadata: {
-        ...baseQuickStart.metadata,
-        name: 'test-quickstart',
-        ...(kindMeta?.extraMetadata ?? {}),
-      },
-      spec: {
-        ...baseQuickStart.spec,
-        tasks: tasks,
-      },
+  return {
+    ...baseQuickStart,
+    metadata: {
+      ...baseQuickStart.metadata,
+      name: 'test-quickstart',
+      ...(kindMeta?.extraMetadata ?? {}),
     },
-    { taskErrors },
-  ];
+  };
 }
 
 const Creator = () => {
@@ -93,8 +54,6 @@ const Creator = () => {
     rawKind !== null ? { id: rawKind, meta: metaForKind(rawKind) } : null;
 
   const [bundles, setBundles] = useState<string[]>([]);
-  const [taskContents, setTaskContents] = useState<string[]>([]);
-
   const [currentTask, setCurrentTask] = useState<number | null>(null);
 
   const updateSpec = (
@@ -143,20 +102,14 @@ const Creator = () => {
 
         return { ...old, ...updates };
       });
-
-      if (meta.hasTasks) {
-        setTaskContents((old) => (old.length === 0 ? [''] : old));
-      } else if (!meta.hasTasks) {
-        setTaskContents([]);
-      }
     }
 
     setRawKind(newKind);
   };
 
-  const [quickStart, errors] = useMemo(
-    () => makeDemoQuickStart(rawKind, rawQuickStart, taskContents),
-    [rawKind, rawQuickStart, taskContents]
+  const quickStart = useMemo(
+    () => makeDemoQuickStart(rawKind, rawQuickStart),
+    [rawKind, rawQuickStart]
   );
 
   const files = useMemo(() => {
@@ -192,12 +145,6 @@ const Creator = () => {
     ];
   }, [quickStart, bundles]);
 
-  if ((quickStart.spec.tasks?.length ?? 0) != taskContents.length) {
-    throw new Error(
-      `Mismatch between quickstart tasks and task contents: ${quickStart.spec.tasks?.length} vs ${taskContents.length}`
-    );
-  }
-
   return (
     <PageGroup>
       <PageSection variant="darker">
@@ -217,9 +164,7 @@ const Creator = () => {
                 updateSpec(() => spec);
               }}
               onChangeBundles={setBundles}
-              onChangeTaskContents={setTaskContents}
               onChangeCurrentTask={setCurrentTask}
-              errors={errors}
               files={files}
             />
           </GridItem>
