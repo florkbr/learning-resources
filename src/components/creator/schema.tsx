@@ -97,6 +97,8 @@ export const NAME_TASK_TITLES = 'task-titles';
 const STEP_PANEL_OVERVIEW = 'step-panel-overview';
 const STEP_DOWNLOAD = 'step-download';
 
+const STEP_TITLE_PANEL_PARENT = 'Create panel';
+
 function makeDetailsStep(kind: ItemKind, bundles: Bundles) {
   const meta = metaForKind(kind);
 
@@ -194,6 +196,7 @@ function makeTaskStep(index: number) {
   return {
     name: taskStepName(index),
     title: `Task ${index + 1}`,
+    substepOf: STEP_TITLE_PANEL_PARENT,
     fields: [
       {
         component: componentTypes.TEXTAREA,
@@ -262,7 +265,8 @@ export function makeSchema(chrome: ChromeAPI): Schema {
       ...ALL_ITEM_KINDS.map((kind) => makeDetailsStep(kind, bundles)),
       {
         name: STEP_PANEL_OVERVIEW,
-        title: 'Panel overview',
+        title: 'Create overview',
+        substepOf: STEP_TITLE_PANEL_PARENT,
         fields: [
           {
             component: componentTypes.TEXTAREA,
