@@ -36,6 +36,7 @@ const DdfNumberInput = (props: UseFieldApiConfig) => {
         value={input.value}
         validated={showInvalid ? 'error' : 'default'}
         min={rest.minValue}
+        max={rest.maxValue}
         unit={rest.unit}
         onPlus={() => input.onChange((input.value ?? 0) + 1)}
         onMinus={() => input.onChange((input.value ?? 0) - 1)}
