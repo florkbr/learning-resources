@@ -104,18 +104,12 @@ function makeDetailsStep(kind: ItemKind, bundles: Bundles) {
 
   fields.push(
     {
-      component: componentTypes.TEXT_FIELD,
-      name: NAME_TITLE,
-      label: 'Title',
-      isRequired: true,
-      validate: [REQUIRED],
-    },
-    {
       component: componentTypes.SELECT,
       name: NAME_BUNDLES,
-      label: 'Bundles',
+      label: 'Associated bundle(s)',
       simpleValue: true,
       isMulti: true,
+      placeholder: 'Select all that apply',
       options: bundles.map((b) => ({
         value: b.id,
         label: `${b.title} (${b.id})`,
@@ -123,10 +117,21 @@ function makeDetailsStep(kind: ItemKind, bundles: Bundles) {
     },
     {
       component: componentTypes.TEXT_FIELD,
-      name: NAME_DESCRIPTION,
-      label: 'Description',
+      name: NAME_TITLE,
+      label: 'Resource title',
+      placeholder: 'Title to display on card',
       isRequired: true,
       validate: [REQUIRED],
+    },
+    {
+      component: componentTypes.TEXTAREA,
+      name: NAME_DESCRIPTION,
+      label: 'Resource description',
+      placeholder:
+        "Short description of resource and will auto-truncate on card with '...' after 3 lines of text.",
+      isRequired: true,
+      validate: [REQUIRED],
+      resizeOrientation: 'vertical',
     }
   );
 
@@ -145,7 +150,8 @@ function makeDetailsStep(kind: ItemKind, bundles: Bundles) {
     fields.push({
       component: componentTypes.TEXT_FIELD,
       name: NAME_URL,
-      label: 'URL',
+      label: 'Endpoint URL',
+      placeholder: 'http://url.redhat.com/docs-n-things',
       isRequired: true,
       validate: [
         REQUIRED,
