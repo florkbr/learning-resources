@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import YAML, { YAMLError } from 'yaml';
+import YAML from 'yaml';
 import {
   Grid,
   GridItem,
@@ -7,18 +7,12 @@ import {
   PageSection,
   Title,
 } from '@patternfly/react-core';
-import {
-  QuickStart,
-  QuickStartSpec,
-  QuickStartTask,
-} from '@patternfly/quickstarts';
+import { QuickStart, QuickStartSpec } from '@patternfly/quickstarts';
 import CreatorWizard, { EMPTY_TASK } from './components/creator/CreatorWizard';
 import { ItemKind, metaForKind } from './components/creator/meta';
 import CreatorPreview from './components/creator/CreatorPreview';
-
-export type CreatorErrors = {
-  taskErrors: Map<number, string>;
-};
+import './Creator.scss';
+import { CreatorWizardStage } from './components/creator/schema';
 
 const BASE_METADATA = {
   name: 'test-quickstart',
@@ -26,56 +20,21 @@ const BASE_METADATA = {
 
 function makeDemoQuickStart(
   kind: ItemKind | null,
-  baseQuickStart: QuickStart,
-  taskContents: string[]
-): [QuickStart, CreatorErrors] {
+  baseQuickStart: QuickStart
+): QuickStart {
   const kindMeta = kind !== null ? metaForKind(kind) : null;
 
-  const [tasks, taskErrors] = (() => {
-    if (kindMeta?.hasTasks !== true) return [undefined, new Map()];
-
-    const out: QuickStartTask[] = [];
-    const errors: CreatorErrors['taskErrors'] = new Map();
-
-    if (baseQuickStart.spec.tasks !== undefined) {
-      for (let index = 0; index < baseQuickStart.spec.tasks.length; ++index) {
-        const task = baseQuickStart.spec.tasks[index];
-
-        try {
-          out.push({
-            ...YAML.parse(taskContents[index]),
-            title: task.title,
-          });
-        } catch (e) {
-          if (!(e instanceof YAMLError)) throw e;
-
-          out.push({ ...EMPTY_TASK, title: task.title });
-          errors.set(index, e.message);
-        }
-      }
-    }
-
-    return [out, errors];
-  })();
-
-  return [
-    {
-      ...baseQuickStart,
-      metadata: {
-        ...baseQuickStart.metadata,
-        name: 'test-quickstart',
-        ...(kindMeta?.extraMetadata ?? {}),
-      },
-      spec: {
-        ...baseQuickStart.spec,
-        tasks: tasks,
-      },
+  return {
+    ...baseQuickStart,
+    metadata: {
+      ...baseQuickStart.metadata,
+      name: 'test-quickstart',
+      ...(kindMeta?.extraMetadata ?? {}),
     },
-    { taskErrors },
-  ];
+  };
 }
 
-const Creator = () => {
+const CreatorInternal = ({ resetCreator }: { resetCreator: () => void }) => {
   const [rawKind, setRawKind] = useState<ItemKind | null>(null);
 
   const [rawQuickStart, setRawQuickStart] = useState<QuickStart>({
@@ -93,9 +52,11 @@ const Creator = () => {
     rawKind !== null ? { id: rawKind, meta: metaForKind(rawKind) } : null;
 
   const [bundles, setBundles] = useState<string[]>([]);
-  const [taskContents, setTaskContents] = useState<string[]>([]);
+  const [currentStage, setCurrentStage] = useState<CreatorWizardStage>({
+    type: 'card',
+  });
 
-  const [currentTask, setCurrentTask] = useState<number | null>(null);
+  const isDownloadStage = currentStage.type !== 'download';
 
   const updateSpec = (
     updater: (old: QuickStartSpec) => Partial<QuickStartSpec>
@@ -143,20 +104,14 @@ const Creator = () => {
 
         return { ...old, ...updates };
       });
-
-      if (meta.hasTasks) {
-        setTaskContents((old) => (old.length === 0 ? [''] : old));
-      } else if (!meta.hasTasks) {
-        setTaskContents([]);
-      }
     }
 
     setRawKind(newKind);
   };
 
-  const [quickStart, errors] = useMemo(
-    () => makeDemoQuickStart(rawKind, rawQuickStart, taskContents),
-    [rawKind, rawQuickStart, taskContents]
+  const quickStart = useMemo(
+    () => makeDemoQuickStart(rawKind, rawQuickStart),
+    [rawKind, rawQuickStart]
   );
 
   const files = useMemo(() => {
@@ -165,14 +120,17 @@ const Creator = () => {
       .replaceAll(/\s/g, '-')
       .replaceAll(/(^-+)|(-+$)/g, '');
 
-    const adjustedQuickstart = { ...quickStart };
-    adjustedQuickstart.spec = { ...adjustedQuickstart.spec };
-    adjustedQuickstart.metadata = {
-      ...adjustedQuickstart.metadata,
-      name: effectiveName,
+    const adjustedQuickstart = {
+      ...quickStart,
+      spec: {
+        ...quickStart.spec,
+        icon: undefined,
+      },
+      metadata: {
+        ...quickStart.metadata,
+        name: effectiveName,
+      },
     };
-
-    delete adjustedQuickstart.spec['icon'];
 
     return [
       {
@@ -192,48 +150,63 @@ const Creator = () => {
     ];
   }, [quickStart, bundles]);
 
-  if ((quickStart.spec.tasks?.length ?? 0) != taskContents.length) {
-    throw new Error(
-      `Mismatch between quickstart tasks and task contents: ${quickStart.spec.tasks?.length} vs ${taskContents.length}`
-    );
-  }
-
   return (
     <PageGroup>
-      <PageSection variant="darker">
+      <PageSection className="rc-header">
         <Title headingLevel="h1" size="2xl">
-          Add new learning resources
+          Add new learning resource
         </Title>
 
-        <p>Description</p>
+        <p>
+          Add cards to the learning resources spaces within console.redhat.com.{' '}
+          <a
+            href="https://docs.google.com/presentation/d/1FiwBc_VuCxvobv80suXww0eKEs381MgR1WK6q7_DynY/edit#slide=id.g1b95fa54a9f_0_801"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Learn more about Hybrid Cloud Console Learning Resources.
+          </a>
+        </p>
       </PageSection>
 
-      <PageSection isFilled>
+      <PageSection isFilled padding={{ default: 'noPadding' }}>
         <Grid hasGutter className="pf-v5-u-h-100 pf-v5-u-w-100">
-          <GridItem span={12} lg={6}>
+          <GridItem span={12} lg={isDownloadStage ? 6 : 12}>
             <CreatorWizard
               onChangeKind={setKind}
               onChangeQuickStartSpec={(spec) => {
                 updateSpec(() => spec);
               }}
               onChangeBundles={setBundles}
-              onChangeTaskContents={setTaskContents}
-              onChangeCurrentTask={setCurrentTask}
-              errors={errors}
+              onChangeCurrentStage={setCurrentStage}
+              resetCreator={resetCreator}
               files={files}
             />
           </GridItem>
 
-          <GridItem span={12} lg={6}>
-            <CreatorPreview
-              kindMeta={selectedKind?.meta ?? null}
-              quickStart={quickStart}
-              currentTask={currentTask}
-            />
-          </GridItem>
+          {isDownloadStage ? (
+            <GridItem span={12} lg={6} className="pf-v5-u-pt-md-on-lg">
+              <CreatorPreview
+                kindMeta={selectedKind?.meta ?? null}
+                quickStart={quickStart}
+                currentStage={currentStage}
+              />
+            </GridItem>
+          ) : null}
         </Grid>
       </PageSection>
     </PageGroup>
+  );
+};
+
+const Creator = () => {
+  const [resetCount, setResetCount] = useState(0n);
+
+  return (
+    <CreatorInternal
+      key={resetCount}
+      resetCreator={() => setResetCount((old) => old + 1n)}
+    />
   );
 };
 
