@@ -1,4 +1,5 @@
 import {
+  Button,
   ClipboardCopy,
   ClipboardCopyVariant,
   Stack,
@@ -194,6 +195,16 @@ const TaskErrorPreview = ({ index }: { index: number }) => {
 const FileDownload = () => {
   const { files } = useContext(CreatorWizardContext);
 
+  function doDownload(file: { content: string; name: string }) {
+    const dotIndex = file.name.lastIndexOf('.');
+    const baseName =
+      dotIndex !== -1 ? file.name.substring(0, dotIndex) : file.name;
+    const extension =
+      dotIndex !== -1 ? file.name.substring(dotIndex + 1) : 'txt';
+
+    downloadFile(file.content, baseName, extension);
+  }
+
   return (
     <div>
       <Stack hasGutter>
@@ -208,22 +219,22 @@ const FileDownload = () => {
           </Text>
         </StackItem>
 
+        <StackItem>
+          <Button
+            variant="primary"
+            icon={<DownloadIcon />}
+            onClick={() => files.forEach((file) => doDownload(file))}
+          >
+            Download all ({files.length}) files
+          </Button>
+        </StackItem>
+
         {files.map((file) => (
           <StackItem key={file.name}>
             <SimpleButton
               icon={<DownloadIcon />}
               className="pf-v5-u-mb-sm"
-              onClick={() => {
-                const dotIndex = file.name.lastIndexOf('.');
-                const baseName =
-                  dotIndex !== -1
-                    ? file.name.substring(0, dotIndex)
-                    : file.name;
-                const extension =
-                  dotIndex !== -1 ? file.name.substring(dotIndex + 1) : 'txt';
-
-                downloadFile(file.content, baseName, extension);
-              }}
+              onClick={() => doDownload(file)}
             >
               {file.name}
             </SimpleButton>
