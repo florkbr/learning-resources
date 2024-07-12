@@ -139,10 +139,13 @@ function makeDetailsStep(kind: ItemKind, bundles: Bundles) {
 
   if (meta.fields.duration) {
     fields.push({
-      component: componentTypes.TEXT_FIELD,
+      component: 'lr-number-input',
       name: NAME_DURATION,
       label: 'Duration',
+      unit: <span className="pf-v5-u-text-nowrap">minutes</span>,
       dataType: dataTypes.NUMBER,
+      initialValue: 0,
+      minValue: 0,
       isRequired: true,
       validate: [REQUIRED],
     });

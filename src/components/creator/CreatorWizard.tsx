@@ -35,6 +35,7 @@ import {
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { downloadFile } from '@redhat-cloud-services/frontend-components-utilities/helpers';
 import SimpleButton from '../SimpleButton';
+import DdfNumberInput from '../DdfNumberInput';
 
 export type TaskState = {
   title: string;
@@ -293,6 +294,7 @@ const CreatorWizard = ({
 
   const componentMapper = {
     ...pf4ComponentMapper,
+    'lr-number-input': DdfNumberInput,
     'lr-task-error': TaskErrorPreview,
     'lr-download-files': FileDownload,
     'lr-wizard-spy': WizardSpy,
