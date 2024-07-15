@@ -1,35 +1,30 @@
 import {
-  ConditionProp,
-  Field,
   FormSpy,
   Schema,
   componentTypes,
-  dataTypes,
-  validatorTypes,
 } from '@data-driven-forms/react-form-renderer';
-import {
-  ALL_ITEM_KINDS,
-  ALL_KIND_ENTRIES,
-  ItemKind,
-  ItemMeta,
-  isItemKind,
-  metaForKind,
-} from './meta';
+import { ALL_ITEM_KINDS, metaForKind } from './meta';
 import { ChromeAPI } from '@redhat-cloud-services/types';
 import {
   WizardButtonsProps,
-  WizardField,
   WizardProps,
 } from '@data-driven-forms/pf4-component-mapper';
 import React from 'react';
-import { Button, Title } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import {
+  MAX_TASKS,
   NAME_TASK_TITLES,
   TASK_STEP_PREFIX,
   makeTaskStep,
   taskFromStepName,
-  taskStepName,
 } from './steps/task';
+import { DETAILS_STEP_PREFIX, makeDetailsStep } from './steps/details';
+import {
+  PANEL_OVERVIEW_STEP_PREFIX,
+  makePanelOverviewStep,
+} from './steps/panel-overview';
+import { NAME_KIND, STEP_KIND, makeKindStep } from './steps/kind';
+import { STEP_DOWNLOAD, makeDownloadStep } from './steps/download';
 
 const CustomButtons = (props: WizardButtonsProps) => {
   return (
@@ -69,133 +64,10 @@ const CustomButtons = (props: WizardButtonsProps) => {
   );
 };
 
-const REQUIRED = {
-  type: validatorTypes.REQUIRED,
-} as const;
-
-function kindMetaCondition(test: (meta: ItemMeta) => boolean): ConditionProp {
-  return {
-    when: NAME_KIND,
-    is: (kind: string | undefined) => {
-      return (
-        typeof kind === 'string' && isItemKind(kind) && test(metaForKind(kind))
-      );
-    },
-  };
-}
-
-type Bundles = ReturnType<ChromeAPI['getAvailableBundles']>;
-
-const DETAILS_STEP_PREFIX = 'step-details-';
-
-function detailsStepName(kind: ItemKind): string {
-  return `${DETAILS_STEP_PREFIX}${kind}`;
-}
-
-export const NAME_KIND = 'kind';
-export const NAME_TITLE = 'title';
-export const NAME_BUNDLES = 'bundles';
-export const NAME_DESCRIPTION = 'description';
-export const NAME_DURATION = 'duration';
-export const NAME_URL = 'url';
-
 export const NAME_PANEL_INTRODUCTION = 'panel-overview';
 export const NAME_PREREQUISITES = 'prerequisites';
 
-const STEP_KIND = 'step-kind';
-const STEP_DOWNLOAD = 'step-download';
-
 const STEP_TITLE_PANEL_PARENT = 'Create panel';
-
-function makeDetailsStep(kind: ItemKind, bundles: Bundles) {
-  const meta = metaForKind(kind);
-
-  const fields: Field[] = [];
-
-  fields.push(
-    {
-      component: componentTypes.PLAIN_TEXT,
-      name: 'internal-text-details-description',
-      label:
-        'Share the details required to populate a card in the correct places.',
-    },
-    {
-      component: componentTypes.SELECT,
-      name: NAME_BUNDLES,
-      label: 'Associated bundle(s)',
-      simpleValue: true,
-      isMulti: true,
-      placeholder: 'Select all that apply',
-      options: bundles.map((b) => ({
-        value: b.id,
-        label: `${b.title} (${b.id})`,
-      })),
-    },
-    {
-      component: componentTypes.TEXT_FIELD,
-      name: NAME_TITLE,
-      label: 'Resource title',
-      placeholder: 'Title to display on card',
-      isRequired: true,
-      validate: [REQUIRED],
-    },
-    {
-      component: componentTypes.TEXTAREA,
-      name: NAME_DESCRIPTION,
-      label: 'Resource description',
-      placeholder:
-        "Short description of resource and will auto-truncate on card with '...' after 3 lines of text.",
-      isRequired: true,
-      validate: [REQUIRED],
-      resizeOrientation: 'vertical',
-    }
-  );
-
-  if (meta.fields.duration) {
-    fields.push({
-      component: 'lr-number-input',
-      name: NAME_DURATION,
-      label: 'Duration',
-      unit: <span className="pf-v5-u-text-nowrap">minutes</span>,
-      dataType: dataTypes.NUMBER,
-      initialValue: 0,
-      minValue: 0,
-      isRequired: true,
-      validate: [REQUIRED],
-    });
-  }
-
-  if (meta.fields.url) {
-    fields.push({
-      component: componentTypes.TEXT_FIELD,
-      name: NAME_URL,
-      label: 'Endpoint URL',
-      placeholder: 'http://url.redhat.com/docs-n-things',
-      isRequired: true,
-      validate: [
-        REQUIRED,
-        {
-          type: validatorTypes.URL,
-        },
-      ],
-      condition: kindMetaCondition((meta) => meta.fields.url === true),
-    });
-  }
-
-  return {
-    name: detailsStepName(kind),
-    title: `${meta.displayName} details`,
-    fields: fields,
-    nextStep: meta.hasTasks ? panelOverviewStepName(kind) : STEP_DOWNLOAD,
-    buttonLabels: {
-      next: meta.hasTasks
-        ? `Approve card and create ${meta.displayName} panel`
-        : 'Approve card and generate files',
-    },
-  };
-}
-
-const MAX_TASKS = 10;
 
 export type CreatorWizardStage =
   | { type: 'card' }
@@ -230,73 +102,6 @@ export function stageFromStepName(name: string): CreatorWizardStage {
   throw new Error('unable to parse step name: ' + name);
 }
 
-const PANEL_OVERVIEW_STEP_PREFIX = 'step-panel-overview-';
-
-function panelOverviewStepName(kind: ItemKind): string {
-  return `${PANEL_OVERVIEW_STEP_PREFIX}${kind}`;
-}
-
-function makePanelOverviewStep(kind: ItemKind) {
-  const meta = metaForKind(kind);
-
-  const step: WizardField & { buttonLabels: { [key: string]: string } } = {
-    name: panelOverviewStepName(kind),
-    title: 'Create overview',
-    substepOf: STEP_TITLE_PANEL_PARENT,
-    fields: [
-      {
-        component: componentTypes.PLAIN_TEXT,
-        name: 'internal-text-overview-instructions',
-        label: `Share the required details to show on the introduction (first view) in the ${meta.displayName}. Details that you entered in the previous steps have been brought in automatically.`,
-      },
-      {
-        component: componentTypes.PLAIN_TEXT,
-        name: 'internal-text-overview-header',
-        label: <Title headingLevel="h3">{meta.displayName} overview</Title>,
-      },
-      {
-        component: componentTypes.TEXTAREA,
-        name: NAME_PANEL_INTRODUCTION,
-        label: 'Introduction (Markdown)',
-        resizeOrientation: 'vertical',
-      },
-      {
-        component: componentTypes.FIELD_ARRAY,
-        name: NAME_PREREQUISITES,
-        label: 'Prerequisites',
-        noItemsMessage: 'No prerequisites have been added.',
-        fields: [
-          {
-            component: componentTypes.TEXT_FIELD,
-            label: 'Prerequisite',
-          },
-        ],
-      },
-      {
-        component: componentTypes.FIELD_ARRAY,
-        name: NAME_TASK_TITLES,
-        label: 'Tasks',
-        minItems: 1,
-        maxItems: MAX_TASKS,
-        noItemsMessage: 'No tasks have been added.',
-        initialValue: [''],
-        fields: [
-          {
-            component: componentTypes.TEXT_FIELD,
-            label: 'Title',
-          },
-        ],
-      },
-    ],
-    nextStep: taskStepName(0),
-    buttonLabels: {
-      next: 'Create task 1 content',
-    },
-  };
-
-  return step;
-}
-
 export function makeSchema(chrome: ChromeAPI): Schema {
   const bundles = chrome.getAvailableBundles();
 
@@ -321,50 +126,19 @@ export function makeSchema(chrome: ChromeAPI): Schema {
     isDynamic: true,
     crossroads: [NAME_KIND, NAME_TASK_TITLES],
     fields: [
-      {
-        name: STEP_KIND,
-        title: 'Select content type',
-        fields: [
-          {
-            component: componentTypes.PLAIN_TEXT,
-            name: 'internal-text-kind-description',
-            label: "Learning resources are grouped by their 'content type'.",
-          },
-          {
-            component: componentTypes.RADIO,
-            name: NAME_KIND,
-            label: 'Select content type',
-            simpleValue: true,
-            options: ALL_KIND_ENTRIES.map(([name, value]) => ({
-              value: name,
-              label: value.displayName,
-            })),
-            isRequired: true,
-            validate: [REQUIRED],
-          },
-        ],
-        nextStep: {
-          when: NAME_KIND,
-          stepMapper: Object.fromEntries(
-            ALL_ITEM_KINDS.map((kind) => [kind, detailsStepName(kind)])
-          ),
-        },
-      },
-      ...ALL_ITEM_KINDS.map((kind) => makeDetailsStep(kind, bundles)),
+      makeKindStep(),
+      ...ALL_ITEM_KINDS.map((kind) =>
+        makeDetailsStep({ kind, bundles, downloadStep: STEP_DOWNLOAD })
+      ),
       ...ALL_ITEM_KINDS.filter((kind) => metaForKind(kind).hasTasks).map(
-        (kind) => makePanelOverviewStep(kind)
+        (kind) =>
+          makePanelOverviewStep({
+            kind,
+            panelStepTitle: STEP_TITLE_PANEL_PARENT,
+          })
       ),
       ...taskSteps,
-      {
-        name: STEP_DOWNLOAD,
-        title: 'Download files',
-        fields: [
-          {
-            component: 'lr-download-files',
-            name: 'internal-download',
-          },
-        ],
-      },
+      makeDownloadStep(),
     ],
   };
 

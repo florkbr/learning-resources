@@ -5,6 +5,8 @@ import {
 import { WizardNextStepFunctionArgument } from '@data-driven-forms/pf4-component-mapper/wizard/wizard';
 import React from 'react';
 
+export const MAX_TASKS = 10;
+
 export const TASK_STEP_PREFIX = 'step-task-detail-';
 
 export const NAME_TASKS_ARRAY = 'tasks';

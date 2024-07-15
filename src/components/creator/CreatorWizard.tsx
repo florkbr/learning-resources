@@ -20,14 +20,8 @@ import DdfWizardContext from '@data-driven-forms/react-form-renderer/wizard-cont
 import pf4ComponentMapper from '@data-driven-forms/pf4-component-mapper/component-mapper';
 import {
   CreatorWizardStage,
-  NAME_BUNDLES,
-  NAME_DESCRIPTION,
-  NAME_DURATION,
-  NAME_KIND,
   NAME_PANEL_INTRODUCTION,
   NAME_PREREQUISITES,
-  NAME_TITLE,
-  NAME_URL,
   makeSchema,
   stageFromStepName,
 } from './schema';
@@ -36,6 +30,14 @@ import { downloadFile } from '@redhat-cloud-services/frontend-components-utiliti
 import SimpleButton from '../SimpleButton';
 import DdfNumberInput from '../DdfNumberInput';
 import { NAME_TASKS_ARRAY, NAME_TASK_TITLES } from './steps/task';
+import {
+  NAME_BUNDLES,
+  NAME_DESCRIPTION,
+  NAME_DURATION,
+  NAME_TITLE,
+  NAME_URL,
+} from './steps/details';
+import { NAME_KIND } from './steps/kind';
 
 type CreatorFiles = {
   name: string;
