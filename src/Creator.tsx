@@ -12,6 +12,7 @@ import CreatorWizard, { EMPTY_TASK } from './components/creator/CreatorWizard';
 import { ItemKind, metaForKind } from './components/creator/meta';
 import CreatorPreview from './components/creator/CreatorPreview';
 import './Creator.scss';
+import { CreatorWizardStage } from './components/creator/schema';
 
 export type CreatorErrors = {
   taskErrors: Map<number, string>;
@@ -55,7 +56,9 @@ const Creator = () => {
     rawKind !== null ? { id: rawKind, meta: metaForKind(rawKind) } : null;
 
   const [bundles, setBundles] = useState<string[]>([]);
-  const [currentTask, setCurrentTask] = useState<number | null>(null);
+  const [currentStage, setCurrentStage] = useState<CreatorWizardStage>({
+    type: 'card',
+  });
 
   const updateSpec = (
     updater: (old: QuickStartSpec) => Partial<QuickStartSpec>
@@ -170,7 +173,7 @@ const Creator = () => {
                 updateSpec(() => spec);
               }}
               onChangeBundles={setBundles}
-              onChangeCurrentTask={setCurrentTask}
+              onChangeCurrentStage={setCurrentStage}
               files={files}
             />
           </GridItem>
@@ -179,7 +182,7 @@ const Creator = () => {
             <CreatorPreview
               kindMeta={selectedKind?.meta ?? null}
               quickStart={quickStart}
-              currentTask={currentTask}
+              currentStage={currentStage}
             />
           </GridItem>
         </Grid>

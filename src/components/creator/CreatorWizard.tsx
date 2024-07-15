@@ -18,6 +18,7 @@ import {
 import DdfWizardContext from '@data-driven-forms/react-form-renderer/wizard-context';
 import pf4ComponentMapper from '@data-driven-forms/pf4-component-mapper/component-mapper';
 import {
+  CreatorWizardStage,
   NAME_BUNDLES,
   NAME_DESCRIPTION,
   NAME_DURATION,
@@ -29,7 +30,7 @@ import {
   NAME_TITLE,
   NAME_URL,
   makeSchema,
-  taskFromStepName,
+  stageFromStepName,
 } from './schema';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { downloadFile } from '@redhat-cloud-services/frontend-components-utilities/helpers';
@@ -45,7 +46,7 @@ export type CreatorWizardProps = {
   onChangeKind: (newKind: ItemKind | null) => void;
   onChangeQuickStartSpec: (newValue: QuickStartSpec) => void;
   onChangeBundles: (newValue: string[]) => void;
-  onChangeCurrentTask: (index: number | null) => void;
+  onChangeCurrentStage: (stage: CreatorWizardStage) => void;
   files: CreatorFiles;
 };
 
@@ -172,10 +173,10 @@ const PropUpdater = ({
 
 const CreatorWizardContext = React.createContext<{
   files: CreatorFiles;
-  onChangeCurrentTask: (index: number | null) => void;
+  onChangeCurrentStage: (stage: CreatorWizardStage) => void;
 }>({
   files: [],
-  onChangeCurrentTask: () => {},
+  onChangeCurrentStage: () => {},
 });
 
 const FileDownload = () => {
@@ -248,8 +249,8 @@ const WizardSpy = () => {
   const creatorContext = useContext(CreatorWizardContext);
 
   useEffect(() => {
-    creatorContext.onChangeCurrentTask(
-      taskFromStepName(wizardContext.currentStep.name)
+    creatorContext.onChangeCurrentStage(
+      stageFromStepName(wizardContext.currentStep.name)
     );
   }, [wizardContext.currentStep.name]);
 
@@ -260,7 +261,7 @@ const CreatorWizard = ({
   onChangeKind,
   onChangeQuickStartSpec,
   onChangeBundles,
-  onChangeCurrentTask,
+  onChangeCurrentStage,
   files,
 }: CreatorWizardProps) => {
   const chrome = useChrome();
@@ -269,9 +270,9 @@ const CreatorWizard = ({
   const context = useMemo(
     () => ({
       files,
-      onChangeCurrentTask,
+      onChangeCurrentStage,
     }),
-    [files, onChangeCurrentTask]
+    [files, onChangeCurrentStage]
   );
 
   const componentMapper = {

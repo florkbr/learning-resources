@@ -80,8 +80,10 @@ function kindMetaCondition(test: (meta: ItemMeta) => boolean): ConditionProp {
 
 type Bundles = ReturnType<ChromeAPI['getAvailableBundles']>;
 
+const DETAILS_STEP_PREFIX = 'step-details-';
+
 function detailsStepName(kind: ItemKind): string {
-  return `step-details-${kind}`;
+  return `${DETAILS_STEP_PREFIX}${kind}`;
 }
 
 export const NAME_KIND = 'kind';
@@ -95,6 +97,7 @@ export const NAME_PANEL_INTRODUCTION = 'panel-overview';
 export const NAME_PREREQUISITES = 'prerequisites';
 export const NAME_TASK_TITLES = 'task-titles';
 
+const STEP_KIND = 'step-kind';
 const STEP_PANEL_OVERVIEW = 'step-panel-overview';
 const STEP_DOWNLOAD = 'step-download';
 
@@ -202,12 +205,44 @@ function taskStepName(index: number): string {
   return `${TASK_STEP_PREFIX}${index}`;
 }
 
-export function taskFromStepName(name: string): number | null {
+function taskFromStepName(name: string): number | null {
   if (name.startsWith(TASK_STEP_PREFIX)) {
     return parseInt(name.substring(TASK_STEP_PREFIX.length));
   }
 
   return null;
+}
+
+export type CreatorWizardStage =
+  | { type: 'card' }
+  | { type: 'panel-overview' }
+  | {
+      type: 'task';
+      index: number;
+    }
+  | { type: 'download' };
+
+export function stageFromStepName(name: string): CreatorWizardStage {
+  if (name === STEP_KIND || name.startsWith(DETAILS_STEP_PREFIX))
+    return { type: 'card' };
+
+  if (name === STEP_PANEL_OVERVIEW) return { type: 'panel-overview' };
+
+  if (name.startsWith(TASK_STEP_PREFIX)) {
+    return {
+      type: 'task',
+      index: (() => {
+        const index = taskFromStepName(name);
+        if (index === null) throw new Error('unable to parse task index');
+
+        return index;
+      })(),
+    };
+  }
+
+  if (name === STEP_DOWNLOAD) return { type: 'download' };
+
+  throw new Error('unable to parse step name: ' + name);
 }
 
 function makeTaskStep(index: number) {
@@ -340,7 +375,7 @@ export function makeSchema(chrome: ChromeAPI): Schema {
     crossroads: [NAME_KIND, NAME_TASK_TITLES],
     fields: [
       {
-        name: 'step-kind',
+        name: STEP_KIND,
         title: 'Select content type',
         fields: [
           {

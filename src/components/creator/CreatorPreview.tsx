@@ -11,29 +11,35 @@ import WrappedQuickStartTile from '../WrappedQuickStartTile';
 import React, { useContext, useMemo, useState } from 'react';
 import { ItemMeta } from './meta';
 import './CreatorPreview.scss';
+import { CreatorWizardStage } from './schema';
 
 const CreatorPreview = ({
   kindMeta,
   quickStart,
-  currentTask,
+  currentStage,
 }: {
   kindMeta: ItemMeta | null;
   quickStart: QuickStart;
-  currentTask: number | null;
+  currentStage: CreatorWizardStage;
 }) => {
   const allQuickStarts = useMemo(() => [quickStart], [quickStart]);
   const [quickStartStates, setQuickStartStates] = useState<AllQuickStartStates>(
     {}
   );
 
-  const [prevTask, setPrevTask] = useState<number | null>(currentTask);
+  const [prevStage, setPrevStage] = useState<typeof currentStage | null>(
+    currentStage
+  );
 
   const parentContext = useContext(QuickStartContext);
 
   const quickstartValues = useValuesForQuickStartContext({
     allQuickStarts: [quickStart],
     activeQuickStartID:
-      kindMeta?.hasTasks === true ? quickStart.metadata.name : '',
+      kindMeta?.hasTasks &&
+      (currentStage.type === 'panel-overview' || currentStage.type === 'task')
+        ? quickStart.metadata.name
+        : '',
     setActiveQuickStartID: () => {},
     allQuickStartStates: quickStartStates,
     setAllQuickStartStates: (states) => setQuickStartStates(states),
@@ -46,21 +52,18 @@ const CreatorPreview = ({
     quickstartValues.setAllQuickStarts?.([quickStart]);
   }
 
-  if (
-    prevTask !== currentTask ||
-    quickstartValues?.activeQuickStartState === undefined
-  ) {
-    setPrevTask(currentTask);
+  if (prevStage !== currentStage) {
+    setPrevStage(currentStage);
 
-    if (currentTask !== null) {
-      quickstartValues.setQuickStartTaskNumber?.(
-        quickStart.metadata.name,
-        currentTask
-      );
-    } else {
+    if (currentStage.type === 'panel-overview') {
       quickstartValues.restartQuickStart?.(
         quickStart.metadata.name,
         quickStart.spec.tasks?.length ?? 0
+      );
+    } else if (currentStage.type === 'task') {
+      quickstartValues.setQuickStartTaskNumber?.(
+        quickStart.metadata.name,
+        currentStage.index
       );
     }
   }
