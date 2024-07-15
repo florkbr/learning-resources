@@ -14,10 +14,6 @@ import CreatorPreview from './components/creator/CreatorPreview';
 import './Creator.scss';
 import { CreatorWizardStage } from './components/creator/schema';
 
-export type CreatorErrors = {
-  taskErrors: Map<number, string>;
-};
-
 const BASE_METADATA = {
   name: 'test-quickstart',
 };
