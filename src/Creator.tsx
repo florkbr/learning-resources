@@ -11,6 +11,7 @@ import { QuickStart, QuickStartSpec } from '@patternfly/quickstarts';
 import CreatorWizard, { EMPTY_TASK } from './components/creator/CreatorWizard';
 import { ItemKind, metaForKind } from './components/creator/meta';
 import CreatorPreview from './components/creator/CreatorPreview';
+import './Creator.scss';
 
 export type CreatorErrors = {
   taskErrors: Map<number, string>;
@@ -147,12 +148,17 @@ const Creator = () => {
 
   return (
     <PageGroup>
-      <PageSection variant="darker">
+      <PageSection variant="darker" className="rc-header">
         <Title headingLevel="h1" size="2xl">
-          Add new learning resources
+          Add new learning resource
         </Title>
 
-        <p>Description</p>
+        <p>
+          Add cards to the learning resources spaces within console.redhat.com.{' '}
+          <a href="https://docs.google.com/presentation/d/1FiwBc_VuCxvobv80suXww0eKEs381MgR1WK6q7_DynY/edit#slide=id.g1b95fa54a9f_0_801">
+            Learn more about Hybrid Cloud Console Learning Resources.
+          </a>
+        </p>
       </PageSection>
 
       <PageSection isFilled>
