@@ -106,6 +106,12 @@ function makeDetailsStep(kind: ItemKind, bundles: Bundles) {
 
   fields.push(
     {
+      component: componentTypes.PLAIN_TEXT,
+      name: 'internal-text-details-description',
+      label:
+        'Share the details required to populate the card in the correct places.',
+    },
+    {
       component: componentTypes.SELECT,
       name: NAME_BUNDLES,
       label: 'Associated bundle(s)',
