@@ -164,7 +164,7 @@ const Creator = () => {
         </p>
       </PageSection>
 
-      <PageSection isFilled>
+      <PageSection isFilled padding={{ default: 'noPadding' }}>
         <Grid hasGutter className="pf-v5-u-h-100 pf-v5-u-w-100">
           <GridItem span={12} lg={6}>
             <CreatorWizard
@@ -178,7 +178,7 @@ const Creator = () => {
             />
           </GridItem>
 
-          <GridItem span={12} lg={6}>
+          <GridItem span={12} lg={6} className="pf-v5-u-pt-md-on-lg">
             <CreatorPreview
               kindMeta={selectedKind?.meta ?? null}
               quickStart={quickStart}
