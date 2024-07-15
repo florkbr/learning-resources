@@ -29,15 +29,16 @@ import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome'
 import { downloadFile } from '@redhat-cloud-services/frontend-components-utilities/helpers';
 import SimpleButton from '../SimpleButton';
 import DdfNumberInput from '../DdfNumberInput';
-import { NAME_TASKS_ARRAY, NAME_TASK_TITLES } from './steps/task';
 import {
   NAME_BUNDLES,
   NAME_DESCRIPTION,
   NAME_DURATION,
+  NAME_KIND,
+  NAME_TASKS_ARRAY,
+  NAME_TASK_TITLES,
   NAME_TITLE,
   NAME_URL,
-} from './steps/details';
-import { NAME_KIND } from './steps/kind';
+} from './steps/common';
 
 type CreatorFiles = {
   name: string;

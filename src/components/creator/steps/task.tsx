@@ -4,18 +4,16 @@ import {
 } from '@data-driven-forms/react-form-renderer';
 import { WizardNextStepFunctionArgument } from '@data-driven-forms/pf4-component-mapper/wizard/wizard';
 import React from 'react';
-
-export const MAX_TASKS = 10;
+import {
+  NAME_TASKS_ARRAY,
+  NAME_TASK_DESCRIPTION,
+  NAME_TASK_ENABLE_WORK_CHECK,
+  NAME_TASK_TITLES,
+  NAME_TASK_WORK_CHECK_HELP,
+  NAME_TASK_WORK_CHECK_INSTRUCTIONS,
+} from './common';
 
 export const TASK_STEP_PREFIX = 'step-task-detail-';
-
-export const NAME_TASKS_ARRAY = 'tasks';
-export const NAME_TASK_TITLES = 'task-titles';
-
-export const NAME_TASK_DESCRIPTION = 'description';
-export const NAME_TASK_ENABLE_WORK_CHECK = 'enable_work_check';
-export const NAME_TASK_WORK_CHECK_INSTRUCTIONS = 'work_check_instructions';
-export const NAME_TASK_WORK_CHECK_HELP = 'work_check_help';
 
 export function taskStepName(index: number): string {
   return `${TASK_STEP_PREFIX}${index}`;
@@ -86,9 +84,9 @@ export function makeTaskStep({
       },
       {
         component: componentTypes.TEXT_FIELD,
-        name: `${taskName}.${NAME_TASK_WORK_CHECK_HELP}`,
         condition: workCheckEnabledCondition,
         label: 'Optional failure message',
+        name: `${taskName}.${NAME_TASK_WORK_CHECK_HELP}`,
         placeholder: 'Try completing the task again',
       },
     ],

@@ -11,20 +11,15 @@ import {
 } from '@data-driven-forms/pf4-component-mapper';
 import React from 'react';
 import { Button } from '@patternfly/react-core';
-import {
-  MAX_TASKS,
-  NAME_TASK_TITLES,
-  TASK_STEP_PREFIX,
-  makeTaskStep,
-  taskFromStepName,
-} from './steps/task';
+import { TASK_STEP_PREFIX, makeTaskStep, taskFromStepName } from './steps/task';
 import { DETAILS_STEP_PREFIX, makeDetailsStep } from './steps/details';
 import {
   PANEL_OVERVIEW_STEP_PREFIX,
   makePanelOverviewStep,
 } from './steps/panel-overview';
-import { NAME_KIND, STEP_KIND, makeKindStep } from './steps/kind';
+import { STEP_KIND, makeKindStep } from './steps/kind';
 import { STEP_DOWNLOAD, makeDownloadStep } from './steps/download';
+import { MAX_TASKS, NAME_KIND, NAME_TASK_TITLES } from './steps/common';
 
 const CustomButtons = (props: WizardButtonsProps) => {
   return (

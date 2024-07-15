@@ -1,10 +1,9 @@
 import { componentTypes } from '@data-driven-forms/react-form-renderer';
 import { ALL_ITEM_KINDS, ALL_KIND_ENTRIES } from '../meta';
-import { REQUIRED } from './common';
+import { NAME_KIND, REQUIRED } from './common';
 import { detailsStepName } from './details';
 
 export const STEP_KIND = 'step-kind';
-export const NAME_KIND = 'kind';
 
 export function makeKindStep() {
   return {

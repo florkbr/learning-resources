@@ -2,9 +2,10 @@ import { ItemKind, metaForKind } from '../meta';
 import { WizardField } from '@data-driven-forms/pf4-component-mapper';
 import { componentTypes } from '@data-driven-forms/react-form-renderer';
 import { Title } from '@patternfly/react-core';
-import { MAX_TASKS, NAME_TASK_TITLES, taskStepName } from './task';
+import { taskStepName } from './task';
 import React from 'react';
 import { NAME_PANEL_INTRODUCTION, NAME_PREREQUISITES } from '../schema';
+import { MAX_TASKS, NAME_TASK_TITLES } from './common';
 
 export const PANEL_OVERVIEW_STEP_PREFIX = 'step-panel-overview-';
 

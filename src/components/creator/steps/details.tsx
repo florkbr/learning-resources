@@ -8,17 +8,18 @@ import {
 } from '@data-driven-forms/react-form-renderer';
 import React from 'react';
 import { ChromeAPI } from '@redhat-cloud-services/types';
-import { REQUIRED } from './common';
+import {
+  NAME_BUNDLES,
+  NAME_DESCRIPTION,
+  NAME_DURATION,
+  NAME_KIND,
+  NAME_TITLE,
+  NAME_URL,
+  REQUIRED,
+} from './common';
 import { panelOverviewStepName } from './panel-overview';
-import { NAME_KIND } from './kind';
 
 export type Bundles = ReturnType<ChromeAPI['getAvailableBundles']>;
-
-export const NAME_TITLE = 'title';
-export const NAME_BUNDLES = 'bundles';
-export const NAME_DESCRIPTION = 'description';
-export const NAME_DURATION = 'duration';
-export const NAME_URL = 'url';
 
 function kindMetaCondition(test: (meta: ItemMeta) => boolean): ConditionProp {
   return {
