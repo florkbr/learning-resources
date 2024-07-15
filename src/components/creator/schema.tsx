@@ -23,7 +23,7 @@ import {
 } from '@data-driven-forms/pf4-component-mapper';
 import { WizardNextStepFunctionArgument } from '@data-driven-forms/pf4-component-mapper/wizard/wizard';
 import React from 'react';
-import { Button } from '@patternfly/react-core';
+import { Button, Title } from '@patternfly/react-core';
 
 const CustomButtons = (props: WizardButtonsProps) => {
   return (
@@ -327,6 +327,17 @@ function makePanelOverviewStep() {
     title: 'Create overview',
     substepOf: STEP_TITLE_PANEL_PARENT,
     fields: [
+      {
+        component: componentTypes.PLAIN_TEXT,
+        name: 'internal-text-overview-instructions',
+        label:
+          'Share the required details to show on the introduction (first view) in the Quick start. Details that you entered in the previous steps have been brought in automatically.',
+      },
+      {
+        component: componentTypes.PLAIN_TEXT,
+        name: 'internal-text-overview-header',
+        label: <Title headingLevel="h3">Panel overview</Title>,
+      },
       {
         component: componentTypes.TEXTAREA,
         name: NAME_PANEL_INTRODUCTION,
