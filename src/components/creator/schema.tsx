@@ -113,7 +113,7 @@ function makeDetailsStep(kind: ItemKind, bundles: Bundles) {
       component: componentTypes.PLAIN_TEXT,
       name: 'internal-text-details-description',
       label:
-        'Share the details required to populate the card in the correct places.',
+        'Share the details required to populate a card in the correct places.',
     },
     {
       component: componentTypes.SELECT,
