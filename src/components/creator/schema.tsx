@@ -111,7 +111,7 @@ export function makeSchema(chrome: ChromeAPI): Schema {
     );
   }
 
-  const wizardProps: WizardProps & {
+  const rawWizardProps: WizardProps & {
     component: string;
     name: string;
   } = {
@@ -136,46 +136,48 @@ export function makeSchema(chrome: ChromeAPI): Schema {
     ],
   };
 
-  const schema = {
-    fields: [wizardProps],
-  };
+  const wizardProps = {
+    ...rawWizardProps,
+    fields: rawWizardProps.fields.map((rawPage) => {
+      const page: typeof rawPage & {
+        buttonLabels?: { [key: string]: string };
+      } = { ...rawPage };
 
-  for (const step of schema.fields) {
-    if (step.component === componentTypes.WIZARD) {
-      for (const rawPage of step.fields) {
-        const page: typeof rawPage & {
-          buttonLabels?: { [key: string]: string };
-        } = rawPage;
-
-        // Add an lr-wizard-spy component to all wizard steps. It must be here (rather
-        // than at the top level of the schema) so that it is inside the WizardContext.
-        page.fields.push({
+      // Add an lr-wizard-spy component to all wizard steps. It must be here (rather
+      // than at the top level of the schema) so that it is inside the WizardContext.
+      page.fields = [
+        ...page.fields,
+        {
           component: 'lr-wizard-spy',
           name: `internal-wizard-spies.${page.name}`,
-        });
+        },
+      ];
 
-        // Use custom buttons for each step.
-        if (page.buttons === undefined) {
-          page.buttons = CustomButtons;
-        }
+      // Use custom buttons for each step.
+      if (page.buttons === undefined) {
+        page.buttons = CustomButtons;
+      }
 
-        if (page.buttonLabels !== undefined) {
-          // Fix missing prop errors for button labels by adding defaults.
-          page.buttonLabels = {
-            next: 'Next',
-            cancel: 'Cancel',
-            back: 'Back',
-            ...page.buttonLabels,
-          };
+      if (page.buttonLabels !== undefined) {
+        // Fix missing prop errors for button labels by adding defaults.
+        page.buttonLabels = {
+          next: 'Next',
+          cancel: 'Cancel',
+          back: 'Back',
+          ...page.buttonLabels,
+        };
 
-          // Don't show "Submit" as a label, since this form is never submitted.
-          if (page.buttonLabels.submit === undefined) {
-            page.buttonLabels.submit = page.buttonLabels.next;
-          }
+        // Don't show "Submit" as a label, since this form is never submitted.
+        if (page.buttonLabels.submit === undefined) {
+          page.buttonLabels.submit = page.buttonLabels.next;
         }
       }
-    }
-  }
 
-  return schema;
+      return page;
+    }),
+  };
+
+  return {
+    fields: [wizardProps],
+  };
 }
