@@ -98,7 +98,6 @@ export const NAME_PREREQUISITES = 'prerequisites';
 export const NAME_TASK_TITLES = 'task-titles';
 
 const STEP_KIND = 'step-kind';
-const STEP_PANEL_OVERVIEW = 'step-panel-overview';
 const STEP_DOWNLOAD = 'step-download';
 
 const STEP_TITLE_PANEL_PARENT = 'Create panel';
@@ -182,7 +181,7 @@ function makeDetailsStep(kind: ItemKind, bundles: Bundles) {
     name: detailsStepName(kind),
     title: `${meta.displayName} details`,
     fields: fields,
-    nextStep: meta.hasTasks ? STEP_PANEL_OVERVIEW : STEP_DOWNLOAD,
+    nextStep: meta.hasTasks ? panelOverviewStepName(kind) : STEP_DOWNLOAD,
     buttonLabels: {
       next: meta.hasTasks
         ? `Approve card and create ${meta.displayName} panel`
@@ -226,7 +225,8 @@ export function stageFromStepName(name: string): CreatorWizardStage {
   if (name === STEP_KIND || name.startsWith(DETAILS_STEP_PREFIX))
     return { type: 'card' };
 
-  if (name === STEP_PANEL_OVERVIEW) return { type: 'panel-overview' };
+  if (name.startsWith(PANEL_OVERVIEW_STEP_PREFIX))
+    return { type: 'panel-overview' };
 
   if (name.startsWith(TASK_STEP_PREFIX)) {
     return {
@@ -321,22 +321,29 @@ function makeTaskStep(index: number) {
   };
 }
 
-function makePanelOverviewStep() {
+const PANEL_OVERVIEW_STEP_PREFIX = 'step-panel-overview-';
+
+function panelOverviewStepName(kind: ItemKind): string {
+  return `${PANEL_OVERVIEW_STEP_PREFIX}${kind}`;
+}
+
+function makePanelOverviewStep(kind: ItemKind) {
+  const meta = metaForKind(kind);
+
   const step: WizardField & { buttonLabels: { [key: string]: string } } = {
-    name: STEP_PANEL_OVERVIEW,
+    name: panelOverviewStepName(kind),
     title: 'Create overview',
     substepOf: STEP_TITLE_PANEL_PARENT,
     fields: [
       {
         component: componentTypes.PLAIN_TEXT,
         name: 'internal-text-overview-instructions',
-        label:
-          'Share the required details to show on the introduction (first view) in the Quick start. Details that you entered in the previous steps have been brought in automatically.',
+        label: `Share the required details to show on the introduction (first view) in the ${meta.displayName}. Details that you entered in the previous steps have been brought in automatically.`,
       },
       {
         component: componentTypes.PLAIN_TEXT,
         name: 'internal-text-overview-header',
-        label: <Title headingLevel="h3">Panel overview</Title>,
+        label: <Title headingLevel="h3">{meta.displayName} overview</Title>,
       },
       {
         component: componentTypes.TEXTAREA,
@@ -429,7 +436,9 @@ export function makeSchema(chrome: ChromeAPI): Schema {
         },
       },
       ...ALL_ITEM_KINDS.map((kind) => makeDetailsStep(kind, bundles)),
-      makePanelOverviewStep(),
+      ...ALL_ITEM_KINDS.filter((kind) => metaForKind(kind).hasTasks).map(
+        (kind) => makePanelOverviewStep(kind)
+      ),
       ...taskSteps,
       {
         name: STEP_DOWNLOAD,
