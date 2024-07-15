@@ -21,9 +21,15 @@ import {
   WizardField,
   WizardProps,
 } from '@data-driven-forms/pf4-component-mapper';
-import { WizardNextStepFunctionArgument } from '@data-driven-forms/pf4-component-mapper/wizard/wizard';
 import React from 'react';
 import { Button, Title } from '@patternfly/react-core';
+import {
+  NAME_TASK_TITLES,
+  TASK_STEP_PREFIX,
+  makeTaskStep,
+  taskFromStepName,
+  taskStepName,
+} from './steps/task';
 
 const CustomButtons = (props: WizardButtonsProps) => {
   return (
@@ -95,7 +101,6 @@ export const NAME_URL = 'url';
 
 export const NAME_PANEL_INTRODUCTION = 'panel-overview';
 export const NAME_PREREQUISITES = 'prerequisites';
-export const NAME_TASK_TITLES = 'task-titles';
 
 const STEP_KIND = 'step-kind';
 const STEP_DOWNLOAD = 'step-download';
@@ -192,26 +197,6 @@ function makeDetailsStep(kind: ItemKind, bundles: Bundles) {
 
 const MAX_TASKS = 10;
 
-export const NAME_TASKS_ARRAY = 'tasks';
-export const NAME_TASK_DESCRIPTION = 'description';
-export const NAME_TASK_ENABLE_WORK_CHECK = 'enable_work_check';
-export const NAME_TASK_WORK_CHECK_INSTRUCTIONS = 'work_check_instructions';
-export const NAME_TASK_WORK_CHECK_HELP = 'work_check_help';
-
-const TASK_STEP_PREFIX = 'step-task-detail-';
-
-function taskStepName(index: number): string {
-  return `${TASK_STEP_PREFIX}${index}`;
-}
-
-function taskFromStepName(name: string): number | null {
-  if (name.startsWith(TASK_STEP_PREFIX)) {
-    return parseInt(name.substring(TASK_STEP_PREFIX.length));
-  }
-
-  return null;
-}
-
 export type CreatorWizardStage =
   | { type: 'card' }
   | { type: 'panel-overview' }
@@ -243,82 +228,6 @@ export function stageFromStepName(name: string): CreatorWizardStage {
   if (name === STEP_DOWNLOAD) return { type: 'download' };
 
   throw new Error('unable to parse step name: ' + name);
-}
-
-function makeTaskStep(index: number) {
-  const taskName = `${NAME_TASKS_ARRAY}[${index}]`;
-
-  const workCheckEnabledCondition = {
-    when: `${taskName}.${NAME_TASK_ENABLE_WORK_CHECK}`,
-    is: true,
-  };
-
-  return {
-    name: taskStepName(index),
-    title: `Task ${index + 1}`,
-    substepOf: STEP_TITLE_PANEL_PARENT,
-    fields: [
-      {
-        component: 'lr-task-title-preview',
-        name: `internal-task-title-preview[${index}]`,
-        index: index,
-      },
-      {
-        component: componentTypes.PLAIN_TEXT,
-        name: `internal-text-task-step-description`,
-        label: 'Add the content for this step of the panel.',
-      },
-      {
-        component: componentTypes.TEXTAREA,
-        name: `${taskName}.${NAME_TASK_DESCRIPTION}`,
-        label: 'Description',
-        resizeOrientation: 'vertical',
-      },
-      {
-        component: componentTypes.CHECKBOX,
-        name: `${taskName}.${NAME_TASK_ENABLE_WORK_CHECK}`,
-        label: "Show 'Work check' section",
-      },
-      {
-        component: componentTypes.PLAIN_TEXT,
-        name: `internal-text-check-work-explanation`,
-        condition: workCheckEnabledCondition,
-        label: "Add the content to display in the 'Check your work box.",
-      },
-      {
-        component: componentTypes.TEXTAREA,
-        name: `${taskName}.${NAME_TASK_WORK_CHECK_INSTRUCTIONS}`,
-        condition: workCheckEnabledCondition,
-        label: 'Work check instructions',
-        resizeOrientation: 'vertical',
-      },
-      {
-        component: componentTypes.TEXT_FIELD,
-        name: `${taskName}.${NAME_TASK_WORK_CHECK_HELP}`,
-        condition: workCheckEnabledCondition,
-        label: 'Optional failure message',
-        placeholder: 'Try completing the task again',
-      },
-    ],
-    nextStep: ({ values }: WizardNextStepFunctionArgument) => {
-      if (index + 1 < (values?.[NAME_TASK_TITLES]?.length ?? 0)) {
-        return taskStepName(index + 1);
-      }
-
-      return STEP_DOWNLOAD;
-    },
-    buttonLabels: {
-      next: (
-        <FormSpy subscription={{ values: true }}>
-          {(state) => {
-            return index + 1 < state.values[NAME_TASK_TITLES].length
-              ? `Create task ${index + 2} content`
-              : 'Approve and generate files';
-          }}
-        </FormSpy>
-      ),
-    },
-  };
 }
 
 const PANEL_OVERVIEW_STEP_PREFIX = 'step-panel-overview-';
@@ -394,7 +303,13 @@ export function makeSchema(chrome: ChromeAPI): Schema {
   const taskSteps = [];
 
   for (let i = 0; i < MAX_TASKS; ++i) {
-    taskSteps.push(makeTaskStep(i));
+    taskSteps.push(
+      makeTaskStep({
+        index: i,
+        panelStepTitle: STEP_TITLE_PANEL_PARENT,
+        downloadStep: STEP_DOWNLOAD,
+      })
+    );
   }
 
   const wizardProps: WizardProps & {

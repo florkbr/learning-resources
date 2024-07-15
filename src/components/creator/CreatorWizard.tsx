@@ -26,8 +26,6 @@ import {
   NAME_KIND,
   NAME_PANEL_INTRODUCTION,
   NAME_PREREQUISITES,
-  NAME_TASKS_ARRAY,
-  NAME_TASK_TITLES,
   NAME_TITLE,
   NAME_URL,
   makeSchema,
@@ -37,6 +35,7 @@ import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome'
 import { downloadFile } from '@redhat-cloud-services/frontend-components-utilities/helpers';
 import SimpleButton from '../SimpleButton';
 import DdfNumberInput from '../DdfNumberInput';
+import { NAME_TASKS_ARRAY, NAME_TASK_TITLES } from './steps/task';
 
 type CreatorFiles = {
   name: string;
