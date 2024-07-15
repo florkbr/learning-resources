@@ -459,7 +459,11 @@ export function makeSchema(chrome: ChromeAPI): Schema {
 
   for (const step of schema.fields) {
     if (step.component === componentTypes.WIZARD) {
-      for (const page of step.fields) {
+      for (const rawPage of step.fields) {
+        const page: typeof rawPage & {
+          buttonLabels?: { [key: string]: string };
+        } = rawPage;
+
         // Add an lr-wizard-spy component to all wizard steps. It must be here (rather
         // than at the top level of the schema) so that it is inside the WizardContext.
         page.fields.push({
@@ -470,6 +474,21 @@ export function makeSchema(chrome: ChromeAPI): Schema {
         // Use custom buttons for each step.
         if (page.buttons === undefined) {
           page.buttons = CustomButtons;
+        }
+
+        if (page.buttonLabels !== undefined) {
+          // Fix missing prop errors for button labels by adding defaults.
+          page.buttonLabels = {
+            next: 'Next',
+            cancel: 'Cancel',
+            back: 'Back',
+            ...page.buttonLabels,
+          };
+
+          // Don't show "Submit" as a label, since this form is never submitted.
+          if (page.buttonLabels.submit === undefined) {
+            page.buttonLabels.submit = page.buttonLabels.next;
+          }
         }
       }
     }
