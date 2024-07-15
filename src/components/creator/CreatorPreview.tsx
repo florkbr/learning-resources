@@ -33,13 +33,13 @@ const CreatorPreview = ({
 
   const parentContext = useContext(QuickStartContext);
 
+  const showPanel =
+    kindMeta?.hasTasks &&
+    (currentStage.type === 'panel-overview' || currentStage.type === 'task');
+
   const quickstartValues = useValuesForQuickStartContext({
     allQuickStarts: [quickStart],
-    activeQuickStartID:
-      kindMeta?.hasTasks &&
-      (currentStage.type === 'panel-overview' || currentStage.type === 'task')
-        ? quickStart.metadata.name
-        : '',
+    activeQuickStartID: showPanel ? quickStart.metadata.name : '',
     setActiveQuickStartID: () => {},
     allQuickStartStates: quickStartStates,
     setAllQuickStartStates: (states) => setQuickStartStates(states),
@@ -76,14 +76,16 @@ const CreatorPreview = ({
             Live card preview
           </Title>
 
-          <div className="rc-tile-preview-wrapper">
-            <WrappedQuickStartTile
-              quickStart={quickStart}
-              bookmarks={null}
-              isActive={false}
-              status={QuickStartStatus.NOT_STARTED}
-            />
-          </div>
+          {!showPanel ? (
+            <div className="rc-tile-preview-wrapper">
+              <WrappedQuickStartTile
+                quickStart={quickStart}
+                bookmarks={null}
+                isActive={false}
+                status={QuickStartStatus.NOT_STARTED}
+              />
+            </div>
+          ) : null}
         </section>
       </QuickStartDrawer>
     </QuickStartContext.Provider>
