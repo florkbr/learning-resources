@@ -272,9 +272,14 @@ export function makeSchema(chrome: ChromeAPI): Schema {
         title: 'Select content type',
         fields: [
           {
+            component: componentTypes.PLAIN_TEXT,
+            name: 'internal-text-kind-description',
+            label: "Learning resources are grouped by their 'content type'.",
+          },
+          {
             component: componentTypes.RADIO,
             name: NAME_KIND,
-            label: 'Type',
+            label: 'Select content type',
             simpleValue: true,
             options: ALL_KIND_ENTRIES.map(([name, value]) => ({
               value: name,
