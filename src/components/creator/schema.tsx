@@ -18,6 +18,7 @@ import {
 import { ChromeAPI } from '@redhat-cloud-services/types';
 import {
   WizardButtonsProps,
+  WizardField,
   WizardProps,
 } from '@data-driven-forms/pf4-component-mapper';
 import { WizardNextStepFunctionArgument } from '@data-driven-forms/pf4-component-mapper/wizard/wizard';
@@ -179,6 +180,11 @@ function makeDetailsStep(kind: ItemKind, bundles: Bundles) {
     title: `${meta.displayName} details`,
     fields: fields,
     nextStep: meta.hasTasks ? STEP_PANEL_OVERVIEW : STEP_DOWNLOAD,
+    buttonLabels: {
+      next: meta.hasTasks
+        ? `Approve card and create ${meta.displayName} panel`
+        : 'Approve card and generate files',
+    },
   };
 }
 
@@ -252,7 +258,67 @@ function makeTaskStep(index: number) {
 
       return STEP_DOWNLOAD;
     },
+    buttonLabels: {
+      next: (
+        <FormSpy subscription={{ values: true }}>
+          {(state) => {
+            return index + 1 < state.values[NAME_TASK_TITLES].length
+              ? `Create task ${index + 2} content`
+              : 'Approve and generate files';
+          }}
+        </FormSpy>
+      ),
+    },
   };
+}
+
+function makePanelOverviewStep() {
+  const step: WizardField & { buttonLabels: { [key: string]: string } } = {
+    name: STEP_PANEL_OVERVIEW,
+    title: 'Create overview',
+    substepOf: STEP_TITLE_PANEL_PARENT,
+    fields: [
+      {
+        component: componentTypes.TEXTAREA,
+        name: NAME_PANEL_INTRODUCTION,
+        label: 'Introduction (Markdown)',
+        resizeOrientation: 'vertical',
+      },
+      {
+        component: componentTypes.FIELD_ARRAY,
+        name: NAME_PREREQUISITES,
+        label: 'Prerequisites',
+        noItemsMessage: 'No prerequisites have been added.',
+        fields: [
+          {
+            component: componentTypes.TEXT_FIELD,
+            label: 'Prerequisite',
+          },
+        ],
+      },
+      {
+        component: componentTypes.FIELD_ARRAY,
+        name: NAME_TASK_TITLES,
+        label: 'Tasks',
+        minItems: 1,
+        maxItems: MAX_TASKS,
+        noItemsMessage: 'No tasks have been added.',
+        initialValue: [''],
+        fields: [
+          {
+            component: componentTypes.TEXT_FIELD,
+            label: 'Title',
+          },
+        ],
+      },
+    ],
+    nextStep: taskStepName(0),
+    buttonLabels: {
+      next: 'Create task 1 content',
+    },
+  };
+
+  return step;
 }
 
 export function makeSchema(chrome: ChromeAPI): Schema {
@@ -303,47 +369,7 @@ export function makeSchema(chrome: ChromeAPI): Schema {
         },
       },
       ...ALL_ITEM_KINDS.map((kind) => makeDetailsStep(kind, bundles)),
-      {
-        name: STEP_PANEL_OVERVIEW,
-        title: 'Create overview',
-        substepOf: STEP_TITLE_PANEL_PARENT,
-        fields: [
-          {
-            component: componentTypes.TEXTAREA,
-            name: NAME_PANEL_INTRODUCTION,
-            label: 'Introduction (Markdown)',
-            resizeOrientation: 'vertical',
-          },
-          {
-            component: componentTypes.FIELD_ARRAY,
-            name: NAME_PREREQUISITES,
-            label: 'Prerequisites',
-            noItemsMessage: 'No prerequisites have been added.',
-            fields: [
-              {
-                component: componentTypes.TEXT_FIELD,
-                label: 'Prerequisite',
-              },
-            ],
-          },
-          {
-            component: componentTypes.FIELD_ARRAY,
-            name: NAME_TASK_TITLES,
-            label: 'Tasks',
-            minItems: 1,
-            maxItems: MAX_TASKS,
-            noItemsMessage: 'No tasks have been added.',
-            initialValue: [''],
-            fields: [
-              {
-                component: componentTypes.TEXT_FIELD,
-                label: 'Title',
-              },
-            ],
-          },
-        ],
-        nextStep: taskStepName(0),
-      },
+      makePanelOverviewStep(),
       ...taskSteps,
       {
         name: STEP_DOWNLOAD,
