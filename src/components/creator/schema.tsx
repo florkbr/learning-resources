@@ -259,10 +259,19 @@ function makeTaskStep(index: number) {
     substepOf: STEP_TITLE_PANEL_PARENT,
     fields: [
       {
+        component: 'lr-task-title-preview',
+        name: `internal-task-title-preview[${index}]`,
+        index: index,
+      },
+      {
+        component: componentTypes.PLAIN_TEXT,
+        name: `internal-text-task-step-description`,
+        label: 'Add the content for this step of the panel.',
+      },
+      {
         component: componentTypes.TEXTAREA,
         name: `${taskName}.${NAME_TASK_DESCRIPTION}`,
         label: 'Description',
-        description: 'Add the content for this step of the panel.',
         resizeOrientation: 'vertical',
       },
       {
@@ -271,11 +280,16 @@ function makeTaskStep(index: number) {
         label: "Show 'Work check' section",
       },
       {
+        component: componentTypes.PLAIN_TEXT,
+        name: `internal-text-check-work-explanation`,
+        condition: workCheckEnabledCondition,
+        label: "Add the content to display in the 'Check your work box.",
+      },
+      {
         component: componentTypes.TEXTAREA,
         name: `${taskName}.${NAME_TASK_WORK_CHECK_INSTRUCTIONS}`,
         condition: workCheckEnabledCondition,
         label: 'Work check instructions',
-        description: "Add the content to display in the 'Check your work box.",
         resizeOrientation: 'vertical',
       },
       {

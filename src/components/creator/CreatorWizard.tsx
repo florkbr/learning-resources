@@ -5,6 +5,7 @@ import {
   Stack,
   StackItem,
   Text,
+  Title,
 } from '@patternfly/react-core';
 import DownloadIcon from '@patternfly/react-icons/dist/dynamic/icons/download-icon';
 import React, { useContext, useEffect, useMemo } from 'react';
@@ -257,6 +258,18 @@ const WizardSpy = () => {
   return undefined;
 };
 
+const TaskTitlePreview = ({ index }: { index: number }) => {
+  return (
+    <FormSpy subscription={{ values: true }}>
+      {(state) => (
+        <Title headingLevel="h3">
+          {state.values?.[NAME_TASK_TITLES]?.[index] ?? ''}
+        </Title>
+      )}
+    </FormSpy>
+  );
+};
+
 const CreatorWizard = ({
   onChangeKind,
   onChangeQuickStartSpec,
@@ -280,6 +293,7 @@ const CreatorWizard = ({
     'lr-number-input': DdfNumberInput,
     'lr-download-files': FileDownload,
     'lr-wizard-spy': WizardSpy,
+    'lr-task-title-preview': TaskTitlePreview,
   };
 
   return (
