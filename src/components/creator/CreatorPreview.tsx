@@ -6,7 +6,7 @@ import {
   QuickStartStatus,
   useValuesForQuickStartContext,
 } from '@patternfly/quickstarts';
-import { Title } from '@patternfly/react-core';
+import { Flex, FlexItem, Title } from '@patternfly/react-core';
 import WrappedQuickStartTile from '../WrappedQuickStartTile';
 import React, { useContext, useMemo, useState } from 'react';
 import { ItemMeta } from './meta';
@@ -69,26 +69,36 @@ const CreatorPreview = ({
   }
 
   return (
-    <QuickStartContext.Provider value={quickstartValues}>
-      <QuickStartDrawer quickStarts={allQuickStarts}>
-        <section>
-          <Title headingLevel="h2" size="xl" className="pf-v5-u-mb-md">
-            Live card preview
-          </Title>
+    <Flex
+      direction={{ default: 'column' }}
+      gap={{ default: 'gapNone' }}
+      className="pf-v5-u-h-100"
+    >
+      <FlexItem>
+        <Title headingLevel="h2" size="xl" className="pf-v5-u-mb-md">
+          Live {showPanel ? kindMeta.displayName : 'card'} preview
+        </Title>
+      </FlexItem>
 
-          {!showPanel ? (
-            <div className="rc-tile-preview-wrapper">
-              <WrappedQuickStartTile
-                quickStart={quickStart}
-                bookmarks={null}
-                isActive={false}
-                status={QuickStartStatus.NOT_STARTED}
-              />
-            </div>
-          ) : null}
-        </section>
-      </QuickStartDrawer>
-    </QuickStartContext.Provider>
+      <FlexItem grow={{ default: 'grow' }}>
+        <QuickStartContext.Provider value={quickstartValues}>
+          <QuickStartDrawer quickStarts={allQuickStarts}>
+            <section>
+              {!showPanel ? (
+                <div className="rc-tile-preview-wrapper">
+                  <WrappedQuickStartTile
+                    quickStart={quickStart}
+                    bookmarks={null}
+                    isActive={false}
+                    status={QuickStartStatus.NOT_STARTED}
+                  />
+                </div>
+              ) : null}
+            </section>
+          </QuickStartDrawer>
+        </QuickStartContext.Provider>
+      </FlexItem>
+    </Flex>
   );
 };
 
