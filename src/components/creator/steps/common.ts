@@ -11,6 +11,9 @@ export const NAME_DESCRIPTION = 'description';
 export const NAME_DURATION = 'duration';
 export const NAME_URL = 'url';
 
+export const NAME_PANEL_INTRODUCTION = 'panel-overview';
+export const NAME_PREREQUISITES = 'prerequisites';
+
 export const NAME_TASKS_ARRAY = 'tasks';
 export const NAME_TASK_TITLES = 'task-titles';
 

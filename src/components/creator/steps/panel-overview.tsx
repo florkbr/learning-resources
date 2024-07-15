@@ -4,8 +4,12 @@ import { componentTypes } from '@data-driven-forms/react-form-renderer';
 import { Title } from '@patternfly/react-core';
 import { taskStepName } from './task';
 import React from 'react';
-import { NAME_PANEL_INTRODUCTION, NAME_PREREQUISITES } from '../schema';
-import { MAX_TASKS, NAME_TASK_TITLES } from './common';
+import {
+  MAX_TASKS,
+  NAME_PANEL_INTRODUCTION,
+  NAME_PREREQUISITES,
+  NAME_TASK_TITLES,
+} from './common';
 
 export const PANEL_OVERVIEW_STEP_PREFIX = 'step-panel-overview-';
 

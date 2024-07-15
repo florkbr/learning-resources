@@ -59,9 +59,6 @@ const CustomButtons = (props: WizardButtonsProps) => {
   );
 };
 
-export const NAME_PANEL_INTRODUCTION = 'panel-overview';
-export const NAME_PREREQUISITES = 'prerequisites';
-
 const STEP_TITLE_PANEL_PARENT = 'Create panel';
 
 export type CreatorWizardStage =

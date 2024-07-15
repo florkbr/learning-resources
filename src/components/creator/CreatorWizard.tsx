@@ -18,13 +18,7 @@ import {
 } from '@data-driven-forms/react-form-renderer';
 import DdfWizardContext from '@data-driven-forms/react-form-renderer/wizard-context';
 import pf4ComponentMapper from '@data-driven-forms/pf4-component-mapper/component-mapper';
-import {
-  CreatorWizardStage,
-  NAME_PANEL_INTRODUCTION,
-  NAME_PREREQUISITES,
-  makeSchema,
-  stageFromStepName,
-} from './schema';
+import { CreatorWizardStage, makeSchema, stageFromStepName } from './schema';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { downloadFile } from '@redhat-cloud-services/frontend-components-utilities/helpers';
 import SimpleButton from '../SimpleButton';
@@ -34,6 +28,8 @@ import {
   NAME_DESCRIPTION,
   NAME_DURATION,
   NAME_KIND,
+  NAME_PANEL_INTRODUCTION,
+  NAME_PREREQUISITES,
   NAME_TASKS_ARRAY,
   NAME_TASK_TITLES,
   NAME_TITLE,
