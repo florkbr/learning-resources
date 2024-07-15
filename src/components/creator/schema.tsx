@@ -11,14 +11,18 @@ import {
 } from '@data-driven-forms/pf4-component-mapper';
 import React from 'react';
 import { Button } from '@patternfly/react-core';
-import { TASK_STEP_PREFIX, makeTaskStep, taskFromStepName } from './steps/task';
-import { DETAILS_STEP_PREFIX, makeDetailsStep } from './steps/details';
+import { isTaskStep, makeTaskStep, taskFromStepName } from './steps/task';
+import { isDetailsStep, makeDetailsStep } from './steps/details';
 import {
-  PANEL_OVERVIEW_STEP_PREFIX,
+  isPanelOverviewStep,
   makePanelOverviewStep,
 } from './steps/panel-overview';
-import { STEP_KIND, makeKindStep } from './steps/kind';
-import { STEP_DOWNLOAD, makeDownloadStep } from './steps/download';
+import { isKindStep, makeKindStep } from './steps/kind';
+import {
+  STEP_DOWNLOAD,
+  isDownloadStep,
+  makeDownloadStep,
+} from './steps/download';
 import { MAX_TASKS, NAME_KIND, NAME_TASK_TITLES } from './steps/common';
 
 const CustomButtons = (props: WizardButtonsProps) => {
@@ -71,13 +75,11 @@ export type CreatorWizardStage =
   | { type: 'download' };
 
 export function stageFromStepName(name: string): CreatorWizardStage {
-  if (name === STEP_KIND || name.startsWith(DETAILS_STEP_PREFIX))
-    return { type: 'card' };
+  if (isKindStep(name) || isDetailsStep(name)) return { type: 'card' };
 
-  if (name.startsWith(PANEL_OVERVIEW_STEP_PREFIX))
-    return { type: 'panel-overview' };
+  if (isPanelOverviewStep(name)) return { type: 'panel-overview' };
 
-  if (name.startsWith(TASK_STEP_PREFIX)) {
+  if (isTaskStep(name)) {
     return {
       type: 'task',
       index: (() => {
@@ -89,7 +91,7 @@ export function stageFromStepName(name: string): CreatorWizardStage {
     };
   }
 
-  if (name === STEP_DOWNLOAD) return { type: 'download' };
+  if (isDownloadStep(name)) return { type: 'download' };
 
   throw new Error('unable to parse step name: ' + name);
 }

@@ -13,7 +13,11 @@ import {
   NAME_TASK_WORK_CHECK_INSTRUCTIONS,
 } from './common';
 
-export const TASK_STEP_PREFIX = 'step-task-detail-';
+const TASK_STEP_PREFIX = 'step-task-detail-';
+
+export function isTaskStep(name: string) {
+  return name.startsWith(TASK_STEP_PREFIX);
+}
 
 export function taskStepName(index: number): string {
   return `${TASK_STEP_PREFIX}${index}`;

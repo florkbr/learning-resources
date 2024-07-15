@@ -3,7 +3,11 @@ import { ALL_ITEM_KINDS, ALL_KIND_ENTRIES } from '../meta';
 import { NAME_KIND, REQUIRED } from './common';
 import { detailsStepName } from './details';
 
-export const STEP_KIND = 'step-kind';
+const STEP_KIND = 'step-kind';
+
+export function isKindStep(name: string): boolean {
+  return name === STEP_KIND;
+}
 
 export function makeKindStep() {
   return {

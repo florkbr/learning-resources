@@ -32,7 +32,11 @@ function kindMetaCondition(test: (meta: ItemMeta) => boolean): ConditionProp {
   };
 }
 
-export const DETAILS_STEP_PREFIX = 'step-details-';
+const DETAILS_STEP_PREFIX = 'step-details-';
+
+export function isDetailsStep(name: string): boolean {
+  return name.startsWith(DETAILS_STEP_PREFIX);
+}
 
 export function detailsStepName(kind: ItemKind): string {
   return `${DETAILS_STEP_PREFIX}${kind}`;

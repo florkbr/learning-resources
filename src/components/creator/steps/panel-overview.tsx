@@ -13,6 +13,10 @@ import {
 
 export const PANEL_OVERVIEW_STEP_PREFIX = 'step-panel-overview-';
 
+export function isPanelOverviewStep(name: string): boolean {
+  return name.startsWith(PANEL_OVERVIEW_STEP_PREFIX);
+}
+
 export function panelOverviewStepName(kind: ItemKind): string {
   return `${PANEL_OVERVIEW_STEP_PREFIX}${kind}`;
 }
