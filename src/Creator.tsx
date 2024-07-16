@@ -118,14 +118,17 @@ const Creator = () => {
       .replaceAll(/\s/g, '-')
       .replaceAll(/(^-+)|(-+$)/g, '');
 
-    const adjustedQuickstart = { ...quickStart };
-    adjustedQuickstart.spec = { ...adjustedQuickstart.spec };
-    adjustedQuickstart.metadata = {
-      ...adjustedQuickstart.metadata,
-      name: effectiveName,
+    const adjustedQuickstart = {
+      ...quickStart,
+      spec: {
+        ...quickStart.spec,
+        icon: undefined,
+      },
+      metadata: {
+        ...quickStart.metadata,
+        name: effectiveName,
+      },
     };
-
-    delete adjustedQuickstart.spec['icon'];
 
     return [
       {
