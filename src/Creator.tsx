@@ -150,7 +150,7 @@ const Creator = () => {
 
   return (
     <PageGroup>
-      <PageSection variant="darker" className="rc-header">
+      <PageSection className="rc-header">
         <Title headingLevel="h1" size="2xl">
           Add new learning resource
         </Title>
