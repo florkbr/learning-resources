@@ -69,7 +69,7 @@ export function makeTaskStep({
         resizeOrientation: 'vertical',
       },
       {
-        component: componentTypes.CHECKBOX,
+        component: componentTypes.SWITCH,
         name: `${taskName}.${NAME_TASK_ENABLE_WORK_CHECK}`,
         label: "Show 'Work check' section",
       },
