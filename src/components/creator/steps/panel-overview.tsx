@@ -10,6 +10,7 @@ import {
   NAME_PREREQUISITES,
   NAME_TASK_TITLES,
 } from './common';
+import PlusCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/plus-circle-icon';
 
 export const PANEL_OVERVIEW_STEP_PREFIX = 'step-panel-overview-';
 
@@ -64,19 +65,16 @@ export function makePanelOverviewStep({
         ],
       },
       {
-        component: componentTypes.FIELD_ARRAY,
+        component: 'lr-string-array',
         name: NAME_TASK_TITLES,
         label: 'Tasks',
         minItems: 1,
         maxItems: MAX_TASKS,
-        noItemsMessage: 'No tasks have been added.',
         initialValue: [''],
-        fields: [
-          {
-            component: componentTypes.TEXT_FIELD,
-            label: 'Title',
-          },
-        ],
+        fullMessage: `Only ${MAX_TASKS} tasks can be added.`,
+        itemLabel: (index: number) => `Task ${index + 1}`,
+        addLabel: 'Add another task',
+        addLabelIcon: <PlusCircleIcon />,
       },
     ],
     nextStep: taskStepName(0),

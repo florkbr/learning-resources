@@ -35,6 +35,7 @@ import {
   NAME_TITLE,
   NAME_URL,
 } from './steps/common';
+import StringArrayInput from '../StringArrayInput';
 
 type CreatorFiles = {
   name: string;
@@ -297,6 +298,7 @@ const CreatorWizard = ({
     'lr-download-files': FileDownload,
     'lr-wizard-spy': WizardSpy,
     'lr-task-title-preview': TaskTitlePreview,
+    'lr-string-array': StringArrayInput,
   };
 
   return (
