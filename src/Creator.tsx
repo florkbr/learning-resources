@@ -34,7 +34,7 @@ function makeDemoQuickStart(
   };
 }
 
-const Creator = () => {
+const CreatorInternal = ({ resetCreator }: { resetCreator: () => void }) => {
   const [rawKind, setRawKind] = useState<ItemKind | null>(null);
 
   const [rawQuickStart, setRawQuickStart] = useState<QuickStart>({
@@ -179,6 +179,7 @@ const Creator = () => {
               }}
               onChangeBundles={setBundles}
               onChangeCurrentStage={setCurrentStage}
+              resetCreator={resetCreator}
               files={files}
             />
           </GridItem>
@@ -195,6 +196,17 @@ const Creator = () => {
         </Grid>
       </PageSection>
     </PageGroup>
+  );
+};
+
+const Creator = () => {
+  const [resetCount, setResetCount] = useState(0n);
+
+  return (
+    <CreatorInternal
+      key={resetCount}
+      resetCreator={() => setResetCount((old) => old + 1n)}
+    />
   );
 };
 

@@ -36,17 +36,15 @@ import {
   NAME_URL,
 } from './steps/common';
 import StringArrayInput from '../StringArrayInput';
-
-type CreatorFiles = {
-  name: string;
-  content: string;
-}[];
+import { CreatorWizardContext } from './context';
+import { CreatorFiles } from './types';
 
 export type CreatorWizardProps = {
   onChangeKind: (newKind: ItemKind | null) => void;
   onChangeQuickStartSpec: (newValue: QuickStartSpec) => void;
   onChangeBundles: (newValue: string[]) => void;
   onChangeCurrentStage: (stage: CreatorWizardStage) => void;
+  resetCreator: () => void;
   files: CreatorFiles;
 };
 
@@ -171,14 +169,6 @@ const PropUpdater = ({
   return undefined;
 };
 
-const CreatorWizardContext = React.createContext<{
-  files: CreatorFiles;
-  onChangeCurrentStage: (stage: CreatorWizardStage) => void;
-}>({
-  files: [],
-  onChangeCurrentStage: () => {},
-});
-
 const FileDownload = () => {
   const { files } = useContext(CreatorWizardContext);
 
@@ -279,6 +269,7 @@ const CreatorWizard = ({
   onChangeQuickStartSpec,
   onChangeBundles,
   onChangeCurrentStage,
+  resetCreator,
   files,
 }: CreatorWizardProps) => {
   const chrome = useChrome();
@@ -288,6 +279,7 @@ const CreatorWizard = ({
     () => ({
       files,
       onChangeCurrentStage,
+      resetCreator,
     }),
     [files, onChangeCurrentStage]
   );
