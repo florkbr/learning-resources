@@ -73,6 +73,8 @@ export function makeDetailsStep({
         value: b.id,
         label: `${b.title} (${b.id})`,
       })),
+      isRequired: true,
+      validate: [REQUIRED],
     },
     {
       component: componentTypes.TEXT_FIELD,
