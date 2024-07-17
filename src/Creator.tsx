@@ -157,7 +157,11 @@ const Creator = () => {
 
         <p>
           Add cards to the learning resources spaces within console.redhat.com.{' '}
-          <a href="https://docs.google.com/presentation/d/1FiwBc_VuCxvobv80suXww0eKEs381MgR1WK6q7_DynY/edit#slide=id.g1b95fa54a9f_0_801">
+          <a
+            href="https://docs.google.com/presentation/d/1FiwBc_VuCxvobv80suXww0eKEs381MgR1WK6q7_DynY/edit#slide=id.g1b95fa54a9f_0_801"
+            target="_blank"
+            rel="noreferrer"
+          >
             Learn more about Hybrid Cloud Console Learning Resources.
           </a>
         </p>

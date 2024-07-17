@@ -198,7 +198,12 @@ const FileDownload = () => {
           <Text>
             Download these files and use them to create the learning resource PR
             in the{' '}
-            <a href="https://github.com/RedHatInsights/quickstarts/tree/main/docs/quickstarts">
+            <a
+              href="https://github.com/RedHatInsights/quickstarts/tree/main/docs/quickstarts"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {' '}
               correct repo
             </a>
             .
