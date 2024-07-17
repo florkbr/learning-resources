@@ -56,6 +56,8 @@ const Creator = () => {
     type: 'card',
   });
 
+  const isDownloadStage = currentStage.type !== 'download';
+
   const updateSpec = (
     updater: (old: QuickStartSpec) => Partial<QuickStartSpec>
   ) => {
@@ -169,7 +171,7 @@ const Creator = () => {
 
       <PageSection isFilled padding={{ default: 'noPadding' }}>
         <Grid hasGutter className="pf-v5-u-h-100 pf-v5-u-w-100">
-          <GridItem span={12} lg={6}>
+          <GridItem span={12} lg={isDownloadStage ? 6 : 12}>
             <CreatorWizard
               onChangeKind={setKind}
               onChangeQuickStartSpec={(spec) => {
@@ -181,13 +183,15 @@ const Creator = () => {
             />
           </GridItem>
 
-          <GridItem span={12} lg={6} className="pf-v5-u-pt-md-on-lg">
-            <CreatorPreview
-              kindMeta={selectedKind?.meta ?? null}
-              quickStart={quickStart}
-              currentStage={currentStage}
-            />
-          </GridItem>
+          {isDownloadStage ? (
+            <GridItem span={12} lg={6} className="pf-v5-u-pt-md-on-lg">
+              <CreatorPreview
+                kindMeta={selectedKind?.meta ?? null}
+                quickStart={quickStart}
+                currentStage={currentStage}
+              />
+            </GridItem>
+          ) : null}
         </Grid>
       </PageSection>
     </PageGroup>
