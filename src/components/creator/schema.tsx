@@ -45,9 +45,6 @@ const CustomButtons = (props: WizardButtonsProps) => {
 
         return (
           <>
-            {computedNext !== undefined
-              ? props.renderNextButton({ submitLabel: 'Next' })
-              : null}
             <Button
               type="button"
               variant="secondary"
@@ -56,6 +53,10 @@ const CustomButtons = (props: WizardButtonsProps) => {
             >
               Back
             </Button>
+
+            {computedNext !== undefined
+              ? props.renderNextButton({ submitLabel: 'Next' })
+              : null}
           </>
         );
       }}
