@@ -1,12 +1,16 @@
 import {
+  Banner,
   Button,
   ClipboardCopy,
   ClipboardCopyVariant,
+  Flex,
+  FlexItem,
   Stack,
   StackItem,
   Text,
   Title,
 } from '@patternfly/react-core';
+import CheckCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/check-circle-icon';
 import DownloadIcon from '@patternfly/react-icons/dist/dynamic/icons/download-icon';
 import React, { useContext, useEffect, useMemo } from 'react';
 import { ItemKind, isItemKind, metaForKind } from './meta';
@@ -184,7 +188,16 @@ const FileDownload = () => {
 
   return (
     <div>
-      <Stack hasGutter>
+      <Banner screenReaderText="Files successfully generated!" variant="green">
+        <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+          <FlexItem>
+            <CheckCircleIcon />
+          </FlexItem>
+          <FlexItem>Files successfully generated!</FlexItem>
+        </Flex>
+      </Banner>
+
+      <Stack hasGutter className="pf-v5-u-m-lg">
         <StackItem>
           <Text>
             Download these files and use them to create the learning resource PR

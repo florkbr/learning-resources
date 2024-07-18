@@ -46,6 +46,7 @@ export function makeDownloadStep() {
         name: 'internal-download',
       },
     ],
+    hasNoBodyPadding: true,
     buttons: DownloadStepButtons,
   };
 }
