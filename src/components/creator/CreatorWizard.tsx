@@ -1,13 +1,20 @@
 import {
+  Banner,
   Button,
   ClipboardCopy,
   ClipboardCopyVariant,
+  Flex,
+  FlexItem,
+  Stack,
+  StackItem,
+  Text,
+  Title,
 } from '@patternfly/react-core';
+import CheckCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/check-circle-icon';
 import DownloadIcon from '@patternfly/react-icons/dist/dynamic/icons/download-icon';
 import React, { useContext, useEffect, useMemo } from 'react';
 import { ItemKind, isItemKind, metaForKind } from './meta';
-import { CreatorErrors } from '../../Creator';
-import { QuickStartSpec } from '@patternfly/quickstarts';
+import { QuickStartSpec, QuickStartTask } from '@patternfly/quickstarts';
 import {
   AnyObject,
   FormRenderer,
@@ -15,6 +22,11 @@ import {
 } from '@data-driven-forms/react-form-renderer';
 import DdfWizardContext from '@data-driven-forms/react-form-renderer/wizard-context';
 import pf4ComponentMapper from '@data-driven-forms/pf4-component-mapper/component-mapper';
+import { CreatorWizardStage, makeSchema, stageFromStepName } from './schema';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
+import { downloadFile } from '@redhat-cloud-services/frontend-components-utilities/helpers';
+import SimpleButton from '../SimpleButton';
+import DdfNumberInput from '../DdfNumberInput';
 import {
   NAME_BUNDLES,
   NAME_DESCRIPTION,
@@ -26,35 +38,18 @@ import {
   NAME_TASK_TITLES,
   NAME_TITLE,
   NAME_URL,
-  makeSchema,
-  taskFromStepName,
-} from './schema';
-import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
-import { downloadFile } from '@redhat-cloud-services/frontend-components-utilities/helpers';
+} from './steps/common';
+import StringArrayInput from '../StringArrayInput';
+import { CreatorWizardContext } from './context';
+import { CreatorFiles } from './types';
 
-export type TaskState = {
-  title: string;
-  yamlContent: string;
-};
-
-export const EMPTY_TASK: TaskState = {
-  title: '',
-  yamlContent: '',
-};
-
-type CreatorFiles = {
-  name: string;
-  content: string;
-}[];
-
-type CreatorWizardProps = {
+export type CreatorWizardProps = {
   onChangeKind: (newKind: ItemKind | null) => void;
   onChangeQuickStartSpec: (newValue: QuickStartSpec) => void;
   onChangeBundles: (newValue: string[]) => void;
-  onChangeTaskContents: (contents: string[]) => void;
-  onChangeCurrentTask: (index: number | null) => void;
+  onChangeCurrentStage: (stage: CreatorWizardStage) => void;
+  resetCreator: () => void;
   files: CreatorFiles;
-  errors: CreatorErrors;
 };
 
 type FormValue = AnyObject;
@@ -64,17 +59,24 @@ type UpdaterProps = {
   onChangeKind: (newKind: ItemKind | null) => void;
   onChangeBundles: (bundles: string[]) => void;
   onChangeQuickStartSpec: (newValue: QuickStartSpec) => void;
-  onChangeTaskContents: (contents: string[]) => void;
 };
 
 const DEFAULT_TASK_TITLES: string[] = [''];
+
+export const EMPTY_TASK: QuickStartTask = {};
+
+type FormTaskValue = {
+  description?: string;
+  enable_work_check?: boolean;
+  work_check_instructions?: string;
+  work_check_help?: string;
+};
 
 const PropUpdater = ({
   values,
   onChangeKind,
   onChangeBundles,
   onChangeQuickStartSpec,
-  onChangeTaskContents,
 }: UpdaterProps) => {
   const bundles = values[NAME_BUNDLES];
 
@@ -91,8 +93,7 @@ const PropUpdater = ({
   const introduction: string | undefined = values[NAME_PANEL_INTRODUCTION];
 
   const taskTitles: string[] = values[NAME_TASK_TITLES] ?? DEFAULT_TASK_TITLES;
-  const taskValues: { content: string | undefined }[] | undefined =
-    values[NAME_TASKS_ARRAY];
+  const taskValues: FormTaskValue[] | undefined = values[NAME_TASKS_ARRAY];
 
   const kind =
     typeof rawKind === 'string' && isItemKind(rawKind) ? rawKind : null;
@@ -103,18 +104,28 @@ const PropUpdater = ({
     onChangeKind(kind);
   }, [kind]);
 
-  const taskContents = useMemo(() => {
-    if (meta?.hasTasks !== true) {
-      return [];
+  const effectiveTasks = useMemo(() => {
+    if (meta?.hasTasks !== true) return undefined;
+
+    const out: QuickStartTask[] = [];
+
+    // The task titles array determines how many tasks there should be.
+    for (let i = 0; i < taskTitles.length; ++i) {
+      const taskValue = taskValues?.[i];
+
+      out.push({
+        title: taskTitles[i],
+        description: taskValue?.description ?? '',
+        review: taskValue?.enable_work_check
+          ? {
+              instructions: taskValue?.work_check_instructions,
+              failedTaskHelp: taskValue?.work_check_help,
+            } ?? ''
+          : undefined,
+      });
     }
 
-    const effective = [];
-
-    for (let i = 0; i < (taskTitles?.length ?? 0); ++i) {
-      effective.push(taskValues?.[i]?.content ?? '');
-    }
-
-    return effective;
+    return out;
   }, [meta, taskTitles, taskValues]);
 
   useEffect(() => {
@@ -142,11 +153,10 @@ const PropUpdater = ({
           : undefined,
       prerequisites: meta?.hasTasks === true ? prerequisites : undefined,
       introduction: meta?.hasTasks === true ? introduction : undefined,
-      tasks:
-        meta?.hasTasks === true
-          ? (taskTitles ?? []).map((t) => ({ title: t }))
-          : undefined,
+      tasks: effectiveTasks,
     });
+
+    onChangeKind(kind);
   }, [
     meta,
     rawKind,
@@ -156,73 +166,86 @@ const PropUpdater = ({
     duration,
     prerequisites,
     introduction,
-    taskTitles,
+    effectiveTasks,
   ]);
-
-  useEffect(() => {
-    onChangeTaskContents(taskContents);
-  }, [taskContents]);
 
   // Allow use as JSX component
   return undefined;
 };
 
-const CreatorWizardContext = React.createContext<{
-  errors: CreatorErrors;
-  files: CreatorFiles;
-  onChangeCurrentTask: (index: number | null) => void;
-}>({
-  errors: {
-    taskErrors: new Map(),
-  },
-  files: [],
-  onChangeCurrentTask: () => {},
-});
-
-const TaskErrorPreview = ({ index }: { index: number }) => {
-  const context = useContext(CreatorWizardContext);
-  const error = context.errors.taskErrors.get(index);
-
-  return error !== undefined ? (
-    <pre style={{ whiteSpace: 'pre-wrap' }}>{error}</pre>
-  ) : undefined;
-};
-
 const FileDownload = () => {
   const { files } = useContext(CreatorWizardContext);
 
+  function doDownload(file: { content: string; name: string }) {
+    const dotIndex = file.name.lastIndexOf('.');
+    const baseName =
+      dotIndex !== -1 ? file.name.substring(0, dotIndex) : file.name;
+    const extension =
+      dotIndex !== -1 ? file.name.substring(dotIndex + 1) : 'txt';
+
+    downloadFile(file.content, baseName, extension);
+  }
+
   return (
     <div>
-      Download these files.
-      {files.map((file) => (
-        <div key={file.name}>
+      <Banner screenReaderText="Files successfully generated!" variant="green">
+        <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+          <FlexItem>
+            <CheckCircleIcon />
+          </FlexItem>
+          <FlexItem>Files successfully generated!</FlexItem>
+        </Flex>
+      </Banner>
+
+      <Stack hasGutter className="pf-v5-u-m-lg">
+        <StackItem>
+          <Text>
+            Download these files and use them to create the learning resource PR
+            in the{' '}
+            <a
+              href="https://github.com/RedHatInsights/quickstarts/tree/main/docs/quickstarts"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {' '}
+              correct repo
+            </a>
+            .
+          </Text>
+        </StackItem>
+
+        <StackItem>
           <Button
-            variant="secondary"
+            variant="primary"
             icon={<DownloadIcon />}
-            onClick={() => {
-              const dotIndex = file.name.lastIndexOf('.');
-              const baseName =
-                dotIndex !== -1 ? file.name.substring(0, dotIndex) : file.name;
-              const extension =
-                dotIndex !== -1 ? file.name.substring(dotIndex + 1) : 'txt';
-
-              downloadFile(file.content, baseName, extension);
-            }}
+            onClick={() => files.forEach((file) => doDownload(file))}
           >
-            {file.name}
+            Download all ({files.length}) files
           </Button>
+        </StackItem>
 
-          <ClipboardCopy
-            isCode
-            isReadOnly
-            variant={ClipboardCopyVariant.expansion}
-            hoverTip="Copy"
-            clickTip="Copied"
-          >
-            {file.content}
-          </ClipboardCopy>
-        </div>
-      ))}
+        {files.map((file) => (
+          <StackItem key={file.name}>
+            <SimpleButton
+              icon={<DownloadIcon />}
+              className="pf-v5-u-mb-sm"
+              onClick={() => doDownload(file)}
+            >
+              {file.name}
+            </SimpleButton>
+
+            <ClipboardCopy
+              isCode
+              isReadOnly
+              variant={ClipboardCopyVariant.expansion}
+              hoverTip="Copy"
+              clickTip="Copied"
+            >
+              {file.content}
+            </ClipboardCopy>
+          </StackItem>
+        ))}
+      </Stack>
     </div>
   );
 };
@@ -234,40 +257,53 @@ const WizardSpy = () => {
   const creatorContext = useContext(CreatorWizardContext);
 
   useEffect(() => {
-    creatorContext.onChangeCurrentTask(
-      taskFromStepName(wizardContext.currentStep.name)
+    creatorContext.onChangeCurrentStage(
+      stageFromStepName(wizardContext.currentStep.name)
     );
   }, [wizardContext.currentStep.name]);
 
   return undefined;
 };
 
+const TaskTitlePreview = ({ index }: { index: number }) => {
+  return (
+    <FormSpy subscription={{ values: true }}>
+      {(state) => (
+        <Title headingLevel="h3">
+          {state.values?.[NAME_TASK_TITLES]?.[index] ?? ''}
+        </Title>
+      )}
+    </FormSpy>
+  );
+};
+
 const CreatorWizard = ({
   onChangeKind,
   onChangeQuickStartSpec,
   onChangeBundles,
-  onChangeTaskContents,
-  onChangeCurrentTask,
+  onChangeCurrentStage,
+  resetCreator,
   files,
-  errors,
 }: CreatorWizardProps) => {
   const chrome = useChrome();
   const schema = useMemo(() => makeSchema(chrome), []);
 
   const context = useMemo(
     () => ({
-      errors,
       files,
-      onChangeCurrentTask,
+      onChangeCurrentStage,
+      resetCreator,
     }),
-    [errors, files]
+    [files, onChangeCurrentStage]
   );
 
   const componentMapper = {
     ...pf4ComponentMapper,
-    'lr-task-error': TaskErrorPreview,
+    'lr-number-input': DdfNumberInput,
     'lr-download-files': FileDownload,
     'lr-wizard-spy': WizardSpy,
+    'lr-task-title-preview': TaskTitlePreview,
+    'lr-string-array': StringArrayInput,
   };
 
   return (
@@ -298,7 +334,6 @@ const CreatorWizard = ({
                   onChangeKind={onChangeKind}
                   onChangeBundles={onChangeBundles}
                   onChangeQuickStartSpec={onChangeQuickStartSpec}
-                  onChangeTaskContents={onChangeTaskContents}
                 />
               )}
             </FormSpy>

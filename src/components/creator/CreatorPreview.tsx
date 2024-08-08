@@ -6,34 +6,40 @@ import {
   QuickStartStatus,
   useValuesForQuickStartContext,
 } from '@patternfly/quickstarts';
-import { Title } from '@patternfly/react-core';
+import { Flex, FlexItem, Title } from '@patternfly/react-core';
 import WrappedQuickStartTile from '../WrappedQuickStartTile';
 import React, { useContext, useMemo, useState } from 'react';
 import { ItemMeta } from './meta';
 import './CreatorPreview.scss';
+import { CreatorWizardStage } from './schema';
 
 const CreatorPreview = ({
   kindMeta,
   quickStart,
-  currentTask,
+  currentStage,
 }: {
   kindMeta: ItemMeta | null;
   quickStart: QuickStart;
-  currentTask: number | null;
+  currentStage: CreatorWizardStage;
 }) => {
   const allQuickStarts = useMemo(() => [quickStart], [quickStart]);
   const [quickStartStates, setQuickStartStates] = useState<AllQuickStartStates>(
     {}
   );
 
-  const [prevTask, setPrevTask] = useState<number | null>(currentTask);
+  const [prevStage, setPrevStage] = useState<typeof currentStage | null>(
+    currentStage
+  );
 
   const parentContext = useContext(QuickStartContext);
 
+  const showPanel =
+    kindMeta?.hasTasks &&
+    (currentStage.type === 'panel-overview' || currentStage.type === 'task');
+
   const quickstartValues = useValuesForQuickStartContext({
     allQuickStarts: [quickStart],
-    activeQuickStartID:
-      kindMeta?.hasTasks === true ? quickStart.metadata.name : '',
+    activeQuickStartID: showPanel ? quickStart.metadata.name : '',
     setActiveQuickStartID: () => {},
     allQuickStartStates: quickStartStates,
     setAllQuickStartStates: (states) => setQuickStartStates(states),
@@ -46,44 +52,53 @@ const CreatorPreview = ({
     quickstartValues.setAllQuickStarts?.([quickStart]);
   }
 
-  if (
-    prevTask !== currentTask ||
-    quickstartValues?.activeQuickStartState === undefined
-  ) {
-    setPrevTask(currentTask);
+  if (prevStage !== currentStage) {
+    setPrevStage(currentStage);
 
-    if (currentTask !== null) {
-      quickstartValues.setQuickStartTaskNumber?.(
-        quickStart.metadata.name,
-        currentTask
-      );
-    } else {
+    if (currentStage.type === 'panel-overview') {
       quickstartValues.restartQuickStart?.(
         quickStart.metadata.name,
         quickStart.spec.tasks?.length ?? 0
+      );
+    } else if (currentStage.type === 'task') {
+      quickstartValues.setQuickStartTaskNumber?.(
+        quickStart.metadata.name,
+        currentStage.index
       );
     }
   }
 
   return (
-    <QuickStartContext.Provider value={quickstartValues}>
-      <QuickStartDrawer quickStarts={allQuickStarts}>
-        <section>
-          <Title headingLevel="h2" size="xl" className="pf-v5-u-mb-md">
-            Live card preview
-          </Title>
+    <Flex
+      direction={{ default: 'column' }}
+      gap={{ default: 'gapNone' }}
+      className="pf-v5-u-h-100"
+    >
+      <FlexItem>
+        <Title headingLevel="h2" size="xl" className="pf-v5-u-mb-md">
+          Live {showPanel ? kindMeta.displayName : 'card'} preview
+        </Title>
+      </FlexItem>
 
-          <div className="rc-tile-preview-wrapper">
-            <WrappedQuickStartTile
-              quickStart={quickStart}
-              bookmarks={null}
-              isActive={false}
-              status={QuickStartStatus.NOT_STARTED}
-            />
-          </div>
-        </section>
-      </QuickStartDrawer>
-    </QuickStartContext.Provider>
+      <FlexItem grow={{ default: 'grow' }}>
+        <QuickStartContext.Provider value={quickstartValues}>
+          <QuickStartDrawer quickStarts={allQuickStarts}>
+            <section>
+              {!showPanel ? (
+                <div className="rc-tile-preview-wrapper">
+                  <WrappedQuickStartTile
+                    quickStart={quickStart}
+                    bookmarks={null}
+                    isActive={false}
+                    status={QuickStartStatus.NOT_STARTED}
+                  />
+                </div>
+              ) : null}
+            </section>
+          </QuickStartDrawer>
+        </QuickStartContext.Provider>
+      </FlexItem>
+    </Flex>
   );
 };
 
