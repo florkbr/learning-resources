@@ -12,33 +12,21 @@ import { FilterIcon, SortAmountDownAltIcon } from '@patternfly/react-icons';
 import './GlobalLearningResourcesFilters.scss';
 import GlobalLearningResourcesFiltersCategory from './GlobalLearningResourcesFiltersCategory';
 import { FiltersCategory } from '../../utils/FiltersCategoryInterface';
+import { UnwrappedLoader } from '@redhat-cloud-services/frontend-components-utilities/useSuspenseLoader';
+import fetchAllData from '../../utils/fetchAllData';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
-const data: FiltersCategory[] = [
-  {
-    categoryName: 'Product families',
-    categoryData: [
-      {
-        group: 'Platforms',
-        data: ['Ansible', 'OpenShift', 'RHEL (Red Hat Enterprise Linux)'],
-      },
-      {
-        group: 'SaaS services',
-        data: ['Quay.io'],
-      },
-      {
-        group: 'Console-wide services',
-        data: [
-          'IAM (Identity and Access Management)',
-          'Console settings',
-          'Subscription services',
-        ],
-      },
-    ],
-  },
-];
+interface GlobalLearningResourcesFiltersProps {
+  loader: UnwrappedLoader<typeof fetchAllData>;
+}
 
-export const GlobalLearningResourcesFilters = () => {
+const GlobalLearningResourcesFilters: React.FC<
+  GlobalLearningResourcesFiltersProps
+> = ({ loader }) => {
   const [inputValue, setInputValue] = useState('');
+  const chrome = useChrome();
+
+  const [filters] = loader(chrome.auth.getUser);
 
   const handleInputChange = (
     _event: React.FormEvent<HTMLInputElement>,
@@ -71,14 +59,17 @@ export const GlobalLearningResourcesFilters = () => {
           </SplitItem>
         </Split>
       </StackItem>
-      {data.map((category: FiltersCategory, index: number) => (
-        <StackItem key={index}>
-          <GlobalLearningResourcesFiltersCategory
-            categoryName={category.categoryName}
-            categoryData={category.categoryData}
-          />
-        </StackItem>
-      ))}
+      {filters.data.categories.map(
+        (category: FiltersCategory, index: number) => (
+          <StackItem key={index}>
+            <GlobalLearningResourcesFiltersCategory
+              categoryId={category.categoryId}
+              categoryName={category.categoryName}
+              categoryData={category.categoryData}
+            />
+          </StackItem>
+        )
+      )}
     </Stack>
   );
 };

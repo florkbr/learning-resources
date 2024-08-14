@@ -11,6 +11,7 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 export const API_BASE = '/api/quickstarts/v1';
 export const QUICKSTARTS = '/quickstarts';
 export const FAVORITES = '/favorites';
+export const FILTERS = '/filters';
 
 export type FavoriteQuickStart = {
   favorite: boolean;
