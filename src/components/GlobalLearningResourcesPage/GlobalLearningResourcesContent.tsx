@@ -14,15 +14,15 @@ import {
   EmptyStateIcon,
 } from '@patternfly/react-core';
 import CubesIcon from '@patternfly/react-icons/dist/dynamic/icons/cubes-icon';
-import fetchQuickstarts from '../../utils/fetchQuickstarts';
 import GlobalLearningResourcesQuickstartItem from './GlobalLearningResourcesQuickstartItem';
 import { useSearchParams } from 'react-router-dom';
 import { UnwrappedLoader } from '@redhat-cloud-services/frontend-components-utilities/useSuspenseLoader';
 import { TabsEnum } from '../../utils/TabsEnum';
+import fetchAllData from '../../utils/fetchAllData';
 
 interface GlobalLearningResourcesContentProps {
   purgeCache: () => void;
-  loader: UnwrappedLoader<typeof fetchQuickstarts>;
+  loader: UnwrappedLoader<typeof fetchAllData>;
 }
 
 interface GalleryQuickstartProps {
@@ -133,7 +133,7 @@ const GlobalLearningResourcesContent: React.FC<
     setSearchParams({ tab: TabsEnum.All });
   }, []);
 
-  const quickStarts = loader(chrome.auth.getUser);
+  const [, quickStarts] = loader(chrome.auth.getUser);
 
   return (
     <div className="pf-v5-u-p-md">

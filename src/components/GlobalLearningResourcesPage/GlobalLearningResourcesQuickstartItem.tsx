@@ -50,7 +50,6 @@ const GlobalLearningResourcesQuickstartItem: React.FC<
       });
       purgeCache();
     } catch (error) {
-      console.log(error);
       setIsBookmarked(quickStart.metadata.favorite);
     }
   };
