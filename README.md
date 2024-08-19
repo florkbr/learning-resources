@@ -11,7 +11,7 @@ To setup the hosts file run following command:
 npm run patch:hosts
 ```
 
-If this command throws an error run it as a `sudo`:
+If this command throws an error, run it as a `sudo`:
 ```bash
 sudo npm run patch:hosts
 ```
