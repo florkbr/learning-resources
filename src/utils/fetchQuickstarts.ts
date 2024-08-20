@@ -3,6 +3,20 @@ import { API_BASE, FAVORITES, FavoriteQuickStart } from './toggleFavorite';
 import { QUICKSTARTS } from '../hooks/useQuickStarts';
 import axios from 'axios';
 import { QuickStart } from '@patternfly/quickstarts';
+import { ObjectMetadata } from '@patternfly/quickstarts/dist/ConsoleInternal/module/k8s/types';
+
+export interface Tag {
+  kind: string;
+  value: string;
+}
+
+export interface TaggedMetadata extends ObjectMetadata {
+  tags: Tag[];
+}
+
+export interface ExtendedQuickstart extends QuickStart {
+  metadata: TaggedMetadata;
+}
 
 async function fetchQuickstarts(
   getUser: ChromeAPI['auth']['getUser'],
@@ -18,7 +32,7 @@ async function fetchQuickstarts(
   const quickstartsPath = `${API_BASE}/${QUICKSTARTS}`;
 
   const contentPromise = axios
-    .get<{ data: { content: QuickStart }[] }>(quickstartsPath, {
+    .get<{ data: { content: ExtendedQuickstart }[] }>(quickstartsPath, {
       params: { account, bundle },
     })
     .then(({ data }) => {
