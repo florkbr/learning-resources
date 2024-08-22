@@ -6,25 +6,33 @@ import {
   CardBody,
   CardFooter,
   CardTitle,
+  Icon,
   Label,
   Text,
   TextContent,
   TextVariants,
 } from '@patternfly/react-core';
+import { TagIcon } from '@patternfly/react-icons';
 import { API_BASE, FAVORITES } from '../../hooks/useQuickStarts';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import axios from 'axios';
 import './GlobalLearningResourcesQuickstartItem.scss';
 import { BookmarkedIcon, OutlinedBookmarkedIcon } from '../common/BookmarkIcon';
+import { Filter } from '../../utils/filtersInterface';
+import { TagsEnum } from '../../utils/tagsEnum';
 
 interface GlobalLearningResourcesQuickstartItemProps {
   quickStart: QuickStart;
   purgeCache: () => void;
+  quickStartTags: {
+    [TagsEnum.ProductFamilies]: Filter[];
+    [TagsEnum.UseCase]: Filter[];
+  };
 }
 
 const GlobalLearningResourcesQuickstartItem: React.FC<
   GlobalLearningResourcesQuickstartItemProps
-> = ({ quickStart, purgeCache }) => {
+> = ({ quickStart, purgeCache, quickStartTags }) => {
   const chrome = useChrome();
   const [isBookmarked, setIsBookmarked] = useState(
     quickStart.metadata.favorite
@@ -88,7 +96,21 @@ const GlobalLearningResourcesQuickstartItem: React.FC<
           <Text component={TextVariants.p}>{quickStart.spec.description}</Text>
         </CardBody>
         <CardFooter className="lr-c-global-learning-resources-quickstart__card--footer">
-          <Text component={TextVariants.small}>Footer</Text>
+          <Text component={TextVariants.small}>
+            {quickStartTags[TagsEnum.ProductFamilies]
+              .map((item) => item?.cardLabel)
+              .join(', ')}
+          </Text>
+          <Text component={TextVariants.small}>
+            {quickStartTags[TagsEnum.UseCase].length > 0 ? (
+              <Icon className="pf-v5-u-mr-sm">
+                <TagIcon />
+              </Icon>
+            ) : undefined}
+            {quickStartTags[TagsEnum.UseCase]
+              .map((item) => item?.cardLabel)
+              .join(', ')}
+          </Text>
         </CardFooter>
       </TextContent>
     </Card>
