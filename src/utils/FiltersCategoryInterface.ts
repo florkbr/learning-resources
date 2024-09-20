@@ -1,3 +1,5 @@
+import { FetchQuickstartsOptions } from './fetchQuickstarts';
+
 export interface FilterItem {
   id: string;
   filterLabel: string;
@@ -11,12 +13,22 @@ export interface CategoryGroup {
   data: FilterItem[];
 }
 
+type CategoryID = keyof FetchQuickstartsOptions;
+
 export interface FiltersCategory {
-  categoryId: string;
+  categoryId: CategoryID;
   categoryName: string;
   categoryData: CategoryGroup[];
+  loaderOptions: FetchQuickstartsOptions;
+  setLoaderOptions: (options: FetchQuickstartsOptions) => void;
 }
 
 export interface FilterData {
   categories: FiltersCategory[];
+}
+
+export interface FiltersAPI {
+  data: {
+    categories: FiltersCategory[];
+  };
 }

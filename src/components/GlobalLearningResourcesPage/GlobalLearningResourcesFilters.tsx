@@ -15,14 +15,17 @@ import { FiltersCategory } from '../../utils/FiltersCategoryInterface';
 import { UnwrappedLoader } from '@redhat-cloud-services/frontend-components-utilities/useSuspenseLoader';
 import fetchAllData from '../../utils/fetchAllData';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+import { FetchQuickstartsOptions } from '../../utils/fetchQuickstarts';
 
 interface GlobalLearningResourcesFiltersProps {
   loader: UnwrappedLoader<typeof fetchAllData>;
+  loaderOptions: FetchQuickstartsOptions;
+  setLoaderOptions: (options: FetchQuickstartsOptions) => void;
 }
 
 const GlobalLearningResourcesFilters: React.FC<
   GlobalLearningResourcesFiltersProps
-> = ({ loader }) => {
+> = ({ loader, loaderOptions, setLoaderOptions }) => {
   const [inputValue, setInputValue] = useState('');
   const chrome = useChrome();
 
@@ -66,6 +69,8 @@ const GlobalLearningResourcesFilters: React.FC<
               categoryId={category.categoryId}
               categoryName={category.categoryName}
               categoryData={category.categoryData}
+              loaderOptions={loaderOptions}
+              setLoaderOptions={setLoaderOptions}
             />
           </StackItem>
         )
