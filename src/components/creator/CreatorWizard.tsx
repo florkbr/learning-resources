@@ -120,7 +120,7 @@ const PropUpdater = ({
           ? {
               instructions: taskValue?.work_check_instructions,
               failedTaskHelp: taskValue?.work_check_help,
-            } ?? ''
+            }
           : undefined,
       });
     }

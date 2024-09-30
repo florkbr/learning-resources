@@ -9,16 +9,34 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import { FiltersCategory } from '../../utils/FiltersCategoryInterface';
+import { Filter } from '../../utils/filtersInterface';
 
 const GlobalLearningResourcesFiltersCategory: React.FC<FiltersCategory> = ({
   categoryId,
   categoryName,
   categoryData,
+  loaderOptions,
+  setLoaderOptions,
 }) => {
   const [isExpanded, setIsExpanded] = useState(true);
 
   const onToggle = (_event: React.MouseEvent, isExpanded: boolean) => {
     setIsExpanded(isExpanded);
+  };
+
+  const updateLoaderOptions = (filter: Filter, isChecked: boolean) => {
+    const updatedCategory = isChecked
+      ? [...(loaderOptions[categoryId] || []), filter.id]
+      : (loaderOptions[categoryId] || []).filter((id) => id !== filter.id);
+
+    setLoaderOptions({
+      ...loaderOptions,
+      [categoryId]: updatedCategory,
+    });
+  };
+
+  const isFilterChecked = (filterId: string) => {
+    return (loaderOptions[categoryId] || []).includes(filterId);
   };
 
   return (
@@ -53,6 +71,10 @@ const GlobalLearningResourcesFiltersCategory: React.FC<FiltersCategory> = ({
                     </div>
                   }
                   id={item.id}
+                  isChecked={isFilterChecked(item.id)}
+                  onChange={(event: React.FormEvent<HTMLInputElement>) =>
+                    updateLoaderOptions(item, event.currentTarget.checked)
+                  }
                 />
               </StackItem>
             ))}

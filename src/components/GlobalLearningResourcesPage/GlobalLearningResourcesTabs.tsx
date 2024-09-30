@@ -3,23 +3,26 @@ import { Spinner, Tab, TabTitleText, Tabs } from '@patternfly/react-core';
 import './GlobalLearningResourcesTabs.scss';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { QuickStart } from '@patternfly/quickstarts';
-import { Link } from 'react-router-dom';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { TabsEnum } from '../../utils/TabsEnum';
 import { UnwrappedLoader } from '@redhat-cloud-services/frontend-components-utilities/useSuspenseLoader';
 import fetchAllData from '../../utils/fetchAllData';
+import { FetchQuickstartsOptions } from '../../utils/fetchQuickstarts';
 
 interface GlobalLearningResourcesTabsProps {
   loader?: UnwrappedLoader<typeof fetchAllData>;
+  loaderOptions?: FetchQuickstartsOptions;
 }
 
 const GlobalLearningResourcesTabs: React.FC<
   GlobalLearningResourcesTabsProps
-> = ({ loader }) => {
+> = ({ loader, loaderOptions }) => {
   const [searchParams] = useSearchParams();
   const chrome = useChrome();
-  const [, quickStarts]: [unknown, QuickStart[]] =
-    loader?.(chrome.auth.getUser) ?? ([{}, []] as [unknown, QuickStart[]]);
+  type LoaderResponse = [unknown, QuickStart[]];
+  const fallback: LoaderResponse = [{}, []];
+  const [, quickStarts]: LoaderResponse =
+    loader?.(chrome.auth.getUser, loaderOptions) ?? fallback;
 
   const bookmarkedResourcesCount = quickStarts.reduce(
     (acc, cur) => (cur.metadata.favorite ? acc + 1 : acc),

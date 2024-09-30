@@ -18,22 +18,30 @@ export interface ExtendedQuickstart extends QuickStart {
   metadata: TaggedMetadata;
 }
 
+export type FetchQuickstartsOptions = {
+  'product-families'?: string[];
+  content?: string[];
+  'use-case'?: string[];
+};
+
 async function fetchQuickstarts(
   getUser: ChromeAPI['auth']['getUser'],
-  bundle?: string
+  options?: FetchQuickstartsOptions
 ) {
   const user = await getUser();
   if (!user) {
     throw new Error('User not logged in');
   }
-
   const account = user.identity.internal?.account_id;
 
   const quickstartsPath = `${API_BASE}/${QUICKSTARTS}`;
 
   const contentPromise = axios
     .get<{ data: { content: ExtendedQuickstart }[] }>(quickstartsPath, {
-      params: { account, bundle },
+      params: {
+        account,
+        ...options,
+      },
     })
     .then(({ data }) => {
       return data.data.map(({ content }) => content);

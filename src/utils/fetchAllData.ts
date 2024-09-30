@@ -1,5 +1,5 @@
 import fetchFilters from './fetchFilters';
-import fetchQuickstarts from './fetchQuickstarts';
+import fetchQuickstarts, { FetchQuickstartsOptions } from './fetchQuickstarts';
 import { ChromeAPI } from '@redhat-cloud-services/types';
 
 export type FetchAllDataResponse = [
@@ -7,11 +7,17 @@ export type FetchAllDataResponse = [
   Awaited<ReturnType<typeof fetchQuickstarts>>
 ];
 
+export const loaderOptionsDefault: FetchQuickstartsOptions = {
+  'product-families': [],
+  content: [],
+  'use-case': [],
+};
+
 function fetchAllData(
   getUser: ChromeAPI['auth']['getUser'],
-  bundle?: string
+  options?: FetchQuickstartsOptions
 ): Promise<FetchAllDataResponse> {
-  return Promise.all([fetchFilters(), fetchQuickstarts(getUser, bundle)]);
+  return Promise.all([fetchFilters(), fetchQuickstarts(getUser, options)]);
 }
 
 export default fetchAllData;

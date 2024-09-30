@@ -18,13 +18,17 @@ import { useSearchParams } from 'react-router-dom';
 import { UnwrappedLoader } from '@redhat-cloud-services/frontend-components-utilities/useSuspenseLoader';
 import { TabsEnum } from '../../utils/TabsEnum';
 import fetchAllData from '../../utils/fetchAllData';
-import { ExtendedQuickstart } from '../../utils/fetchQuickstarts';
+import {
+  ExtendedQuickstart,
+  FetchQuickstartsOptions,
+} from '../../utils/fetchQuickstarts';
 import { Filter, FilterMap, ValidTags } from '../../utils/filtersInterface';
 import { TagsEnum } from '../../utils/tagsEnum';
 
 interface GlobalLearningResourcesContentProps {
-  purgeCache: () => void;
   loader: UnwrappedLoader<typeof fetchAllData>;
+  loaderOptions: FetchQuickstartsOptions;
+  purgeCache: () => void;
 }
 
 interface GalleryQuickstartProps {
@@ -171,7 +175,7 @@ const GalleryBookmarkedQuickstart: React.FC<GalleryQuickstartProps> = ({
 
 const GlobalLearningResourcesContent: React.FC<
   GlobalLearningResourcesContentProps
-> = ({ loader, purgeCache }) => {
+> = ({ loader, loaderOptions, purgeCache }) => {
   const chrome = useChrome();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -179,7 +183,8 @@ const GlobalLearningResourcesContent: React.FC<
     setSearchParams({ tab: TabsEnum.All });
   }, []);
 
-  const [filters, quickStarts] = loader(chrome.auth.getUser);
+  const [filters, quickStarts] = loader(chrome.auth.getUser, loaderOptions);
+
   const filterMap = useMemo(() => {
     const filterMap: FilterMap = {};
 
