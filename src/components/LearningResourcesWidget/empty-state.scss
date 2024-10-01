@@ -1,11 +1,11 @@
 .pf-v5-c-empty-state {
   height: 100%;
-  padding: var(--pf-global--spacer--md);
+  padding: var(--pf-v5-global--spacer--md);
   &__icon {
     margin-bottom: 0;
   }
   &__body {
-    margin-top: var(--pf-global--spacer--sm);
+    margin-top: var(--pf-v5-global--spacer--sm);
   }
 }
 
