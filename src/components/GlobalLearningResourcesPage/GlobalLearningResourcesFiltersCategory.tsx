@@ -49,7 +49,7 @@ const GlobalLearningResourcesFiltersCategory: React.FC<FiltersCategory> = ({
         <Stack component="div" className="pf-v5-u-mt-md" key={index}>
           <TextContent>
             {subCategory.group ? (
-              <Text component={TextVariants.small} className="pf-u-mb-0">
+              <Text component={TextVariants.small} className="pf-v5-u-mb-0">
                 {subCategory.group}
               </Text>
             ) : null}

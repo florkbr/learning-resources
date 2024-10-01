@@ -50,7 +50,7 @@ const CatalogWrapper: React.FC<
           <SplitItem isFilled>
             <Title headingLevel="h3" size="lg">
               {sectionTitle}
-              <Badge className="pf-u-ml-sm">{sectionCount}</Badge>
+              <Badge className="pf-v5-u-ml-sm">{sectionCount}</Badge>
             </Title>
           </SplitItem>
           <SplitItem>{rightTitle}</SplitItem>
@@ -74,7 +74,7 @@ const CatalogWrapper: React.FC<
           <SplitItem isFilled>
             <Title headingLevel="h3" size="lg">
               {sectionTitle}
-              <Badge isRead={!sectionCount} className="pf-u-ml-sm">
+              <Badge isRead={!sectionCount} className="pf-v5-u-ml-sm">
                 {sectionCount}
               </Badge>
             </Title>
@@ -124,7 +124,7 @@ const CatalogSection = ({
       >
         <FlexItem className="pf-v5-u-mr-sm">
           <Button
-            className="pf-c-expandable-section__toggle pf-v5-u-pl-0 pf-v5-u-pr-0"
+            className="pf-v5-c-expandable-section__toggle pf-v5-u-pl-0 pf-v5-u-pr-0"
             variant="plain"
             isDisabled
             icon={<AngleRightIcon />}
@@ -134,7 +134,7 @@ const CatalogSection = ({
           <SplitItem isFilled>
             <Title headingLevel="h3" size="lg">
               {sectionTitle}
-              <Badge isRead={false} className="pf-u-ml-sm">
+              <Badge isRead={false} className="pf-v5-u-ml-sm">
                 {sectionCount}
               </Badge>
             </Title>
@@ -154,7 +154,7 @@ const CatalogSection = ({
       rightTitle={rightTitle}
     >
       {sectionDescription && (
-        <TextContent className="pf-u-mb-md">
+        <TextContent className="pf-v5-u-mb-md">
           <Text>{sectionDescription}</Text>
         </TextContent>
       )}

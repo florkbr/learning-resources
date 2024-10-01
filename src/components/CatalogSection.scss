@@ -3,23 +3,23 @@
     // No PF variable exists for this
     padding-left: 28px;
   }
-  .pf-c-expandable-section__toggle {
+  .pf-v5-c-expandable-section__toggle {
     display: flex;
     align-items: center;
     padding-top: 0;
   }
-  .pf-c-expandable-section__content {
+  .pf-v5-c-expandable-section__content {
     margin-top: 0;
   }
   h3 {
-    color: var(--pf-global--palette--black-900);
+    color: var(--pf-v5-global--palette--black-900);
     span {
       vertical-align: middle;
     }
   }
 
   & > .pf-v5-l-split {
-    margin-bottom: var(--pf-global--spacer--md);
+    margin-bottom: var(--pf-v5-global--spacer--md);
   }
 
   .pf-v5-c-badge {

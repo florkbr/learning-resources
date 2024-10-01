@@ -84,8 +84,8 @@ export const Viewer = ({ bundle }: { bundle: string }) => {
 
   return (
     <PageGroup id="learning-resources-wrapper" style={{ height: `${size}px` }}>
-      <PageSection className="pf-u-p-lg lr-c-catalog__header">
-        <StackItem className="pf-u-mb-md">
+      <PageSection className="pf-v5-u-p-lg lr-c-catalog__header">
+        <StackItem className="pf-v5-u-mb-md">
           <CatalogHeader />
         </StackItem>
         <StackItem>
@@ -95,12 +95,12 @@ export const Viewer = ({ bundle }: { bundle: string }) => {
           />
         </StackItem>
       </PageSection>
-      <PageSection className="pf-u-background-color-200 pf-m-fill">
+      <PageSection className="pf-v5-u-background-color-200 pf-m-fill">
         <div className="pf-v5-u-h-100">
           <Sidebar id="content-wrapper" isPanelRight hasGutter>
             <SidebarContent
               id="quick-starts"
-              className="pf-u-background-color-200"
+              className="pf-v5-u-background-color-200"
             >
               {showBookmarks && (
                 <React.Fragment>
@@ -154,7 +154,7 @@ export const Viewer = ({ bundle }: { bundle: string }) => {
                     activeQuickStartID={activeQuickStartID}
                     allQuickStartStates={allQuickStartStates}
                   />
-                  <Divider className="pf-u-mt-lg pf-u-mb-lg" />
+                  <Divider className="pf-v5-u-mt-lg pf-v5-u-mb-lg" />
                 </React.Fragment>
               )}
               <CatalogSection
@@ -167,7 +167,7 @@ export const Viewer = ({ bundle }: { bundle: string }) => {
                 activeQuickStartID={activeQuickStartID}
                 allQuickStartStates={allQuickStartStates}
               />
-              <Divider className="pf-u-mt-lg pf-u-mb-lg" />
+              <Divider className="pf-v5-u-mt-lg pf-v5-u-mb-lg" />
               <CatalogSection
                 sectionName="quick-starts"
                 toggleFavorite={toggleFavorite}
@@ -178,7 +178,7 @@ export const Viewer = ({ bundle }: { bundle: string }) => {
                 activeQuickStartID={activeQuickStartID}
                 allQuickStartStates={allQuickStartStates}
               />
-              <Divider className="pf-u-mt-lg pf-u-mb-lg" />
+              <Divider className="pf-v5-u-mt-lg pf-v5-u-mb-lg" />
               <CatalogSection
                 sectionName="learning-paths"
                 toggleFavorite={toggleFavorite}
@@ -189,7 +189,7 @@ export const Viewer = ({ bundle }: { bundle: string }) => {
                 activeQuickStartID={activeQuickStartID}
                 allQuickStartStates={allQuickStartStates}
               />
-              <Divider className="pf-u-mt-lg pf-u-mb-lg" />
+              <Divider className="pf-v5-u-mt-lg pf-v5-u-mb-lg" />
               <CatalogSection
                 sectionName="other-content-types"
                 toggleFavorite={toggleFavorite}
@@ -203,7 +203,7 @@ export const Viewer = ({ bundle }: { bundle: string }) => {
             </SidebarContent>
             <SidebarPanel
               variant="sticky"
-              className="pf-u-background-color-200 pf-u-pl-lg pf-u-pl-0-on-lg"
+              className="pf-v5-u-background-color-200 pf-v5-u-pl-lg pf-v5-u-pl-0-on-lg"
             >
               <TableOfContents
                 defaultActive="bookmarks"
