@@ -37,13 +37,10 @@ const GlobalLearningResourcesFilters: React.FC<
     _event: React.FormEvent<HTMLInputElement>,
     value: string
   ) => {
-    const trimmedValue = value.trim();
-    if (trimmedValue) {
-      setLoaderOptions({
-        ...(loaderOptions || loaderOptionsFalllback),
-        'display-name': trimmedValue,
-      });
-    }
+    setLoaderOptions({
+      ...(loaderOptions || loaderOptionsFalllback),
+      'display-name': value,
+    });
   };
 
   return (

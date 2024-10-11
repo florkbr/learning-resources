@@ -49,6 +49,10 @@ async function fetchQuickstarts(
       params: {
         account,
         ...options,
+        'display-name':
+          options?.['display-name']?.trim() === ''
+            ? ''
+            : options?.['display-name'],
       },
     })
     .then(({ data }) => {
