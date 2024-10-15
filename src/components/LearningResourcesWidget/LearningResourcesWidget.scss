@@ -1,7 +1,51 @@
 .learningResources-learningResources {
+  container-type: inline-size;
   overflow-y: auto;
 }
+.lrn-widg-l-flex-row {
+  border-bottom: 1px solid #d2d2d2;
+}
 
-.widget-learning-resources {
-  column-width: 300px;
+@container (width > 700px) {
+  .lrn-widg-l-flex-row {
+    flex-direction: row;
+    padding: 8px 8px 8px 16px;
+    width: 100%;
+    .item-1 {
+      width: 50%;
+    }
+    .group {
+      width: 47%;
+      .item-2 {
+        flex-grow: 1;
+      }
+      .item-3 {
+        flex-shrink: 1;
+        min-width: 160px;
+      }
+    }
+  }
+}
+@container (width < 700px) { 
+  .lrn-widg-l-flex-row {
+    padding-left: 8px;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .item-1 {
+    padding-left: 16px;
+    padding-top: 8px;
+    width: 100%;
+  }
+  .group {
+    padding-bottom: 8px;
+    flex-direction: row;
+    .item-2 {
+      padding-left: 16px;
+      margin-right: 0;
+    }
+    .item-3 {
+      padding-left: 16px;
+    }
+  }
 }
