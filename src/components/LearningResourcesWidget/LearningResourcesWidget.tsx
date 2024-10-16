@@ -54,7 +54,7 @@ const LearningResourcesWidget: React.FunctionComponent<{
 
   return (
     <div className="learning-resources-widget">
-      {bookmarks.length === 100 ? (
+      {bookmarks.length === 0 ? (
         <LearningResourcesEmptyState />
       ) : (
         <Flex direction={{ default: 'column' }}>

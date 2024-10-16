@@ -9,7 +9,7 @@
 @container (width > 700px) {
   .lrn-widg-l-flex-row {
     flex-direction: row;
-    padding: 8px 8px 8px 16px;
+    padding: var(--pf-v5-global--spacer--sm) var(--pf-v5-global--spacer--sm) var(--pf-v5-global--spacer--sm) var(--pf-v5-global--spacer--md);
     width: 100%;
     .item-1 {
       width: 50%;
@@ -28,24 +28,24 @@
 }
 @container (width < 700px) { 
   .lrn-widg-l-flex-row {
-    padding-left: 8px;
+    padding-left: var(--pf-v5-global--spacer--sm);
     flex-direction: column;
     gap: 4px;
   }
   .item-1 {
-    padding-left: 16px;
-    padding-top: 8px;
+    padding-left: var(--pf-v5-global--spacer--md);
+    padding-top: var(--pf-v5-global--spacer--sm);
     width: 100%;
   }
   .group {
-    padding-bottom: 8px;
+    padding-bottom: var(--pf-v5-global--spacer--sm);
     flex-direction: row;
     .item-2 {
-      padding-left: 16px;
+      padding-left: var(--pf-v5-global--spacer--md);
       margin-right: 0;
     }
     .item-3 {
-      padding-left: 16px;
+      padding-left: var(--pf-v5-global--spacer--md);
     }
   }
 }
