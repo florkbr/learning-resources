@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment } from 'react';
 import {
   Text,
   TextContent,
@@ -20,6 +20,7 @@ import ExternalLinkAltIcon from '@patternfly/react-icons/dist/js/icons/external-
 
 import './LearningResourcesWidget.scss';
 import { QuickStart } from '@patternfly/quickstarts';
+import { ObjectMetadata } from '@patternfly/quickstarts/dist/ConsoleInternal/module/k8s/types';
 
 export const API_BASE = '/api/quickstarts/v1';
 export const QUICKSTARTS = '/quickstarts';
@@ -30,19 +31,16 @@ export type FavoriteQuickStart = {
   quickstartName: string;
 };
 
-const LinkWrapper = ({
-  pathname,
-  title,
-}: {
-  pathname: string;
-  title: string;
+const constructQuickStartUrl: (metadata: ObjectMetadata) => string = ({
+  tags,
 }) => {
-  const { updateDocumentTitle } = useChrome();
-  return (
-    <Link onClick={() => updateDocumentTitle(title)} to={pathname}>
-      {title}
-    </Link>
+  const bunlde = tags.find(({ kind }: { kind: string }) => kind === 'bundle');
+  const application = tags.find(
+    ({ kind }: { kind: string }) => kind === 'application'
   );
+  return `${bunlde ? `/${bunlde.value}` : ''}${
+    application ? `/${application.value}` : ''
+  }`;
 };
 
 const LearningResourcesWidget: React.FunctionComponent<{
@@ -51,6 +49,7 @@ const LearningResourcesWidget: React.FunctionComponent<{
   const getPathName = (url: string) => {
     return new URL(url).host;
   };
+  const { quickStarts } = useChrome();
 
   return (
     <div className="learning-resources-widget">
@@ -62,18 +61,24 @@ const LearningResourcesWidget: React.FunctionComponent<{
             <Flex key={index} className="lrn-widg-l-flex-row">
               <FlexItem className="item-1">
                 <TextContent>
-                  {metadata.externalDocumentation ? (
+                  {metadata.tags.find(
+                    ({ kind }: { kind: string }) => kind === 'content'
+                  )?.value === 'quickstart' ? (
+                    <Link
+                      onClick={() =>
+                        quickStarts.activateQuickstart(metadata.name)
+                      }
+                      to={spec.link?.href || constructQuickStartUrl(metadata)}
+                    >
+                      {spec.displayName}
+                    </Link>
+                  ) : (
                     <a href={spec.link?.href} target="_blank" rel="noreferrer">
                       {spec.displayName}
                       <Icon className="pf-v5-u-ml-sm" size="sm" isInline>
                         <ExternalLinkAltIcon />
                       </Icon>
                     </a>
-                  ) : (
-                    <LinkWrapper
-                      title={spec.displayName}
-                      pathname={spec.link?.href || ''}
-                    />
                   )}
                 </TextContent>
               </FlexItem>
@@ -101,40 +106,16 @@ const LearningResourcesWidget: React.FunctionComponent<{
   );
 };
 
-const GetFavorites = ({
-  onContentReady,
-  bundle,
-}: {
-  bundle: string;
-  onContentReady: (data: QuickStart[]) => void;
-}) => {
-  const { bookmarks, contentReady } = useQuickStarts(bundle);
-  useEffect(() => {
-    if (contentReady) {
-      onContentReady(bookmarks);
-    }
-  }, [contentReady]);
-  return null;
-};
-
 const LearningResourcesWidgetWrapper = () => {
-  const { getAvailableBundles } = useChrome();
-  const [allFavorites, setAllFavorites] = useState<QuickStart[][]>([]);
+  const { bookmarks, contentReady } = useQuickStarts();
   return (
     <Fragment>
-      {getAvailableBundles().map(({ id }, index) => (
-        <GetFavorites
-          bundle={id}
-          key={index}
-          onContentReady={(data) => setAllFavorites((prev) => [...prev, data])}
-        />
-      ))}
-      {allFavorites.length !== getAvailableBundles().length ? (
+      {!contentReady ? (
         <Bullseye>
           <Spinner />
         </Bullseye>
       ) : (
-        <LearningResourcesWidget bookmarks={allFavorites.flat()} />
+        <LearningResourcesWidget bookmarks={bookmarks} />
       )}
     </Fragment>
   );
