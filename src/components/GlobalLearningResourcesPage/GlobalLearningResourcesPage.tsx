@@ -5,9 +5,10 @@ import GlobalLearningResourcesFilters from './GlobalLearningResourcesFilters';
 import GlobalLearningResourcesContent from './GlobalLearningResourcesContent';
 import './GlobalLearningResourcesPage.scss';
 import useSuspenseLoader from '@redhat-cloud-services/frontend-components-utilities/useSuspenseLoader/useSuspenseLoader';
-import { Spinner } from '@patternfly/react-core';
 import fetchAllData, { loaderOptionsDefault } from '../../utils/fetchAllData';
 import { FetchQuickstartsOptions } from '../../utils/fetchQuickstarts';
+import GlobalLearningResourcesFiltersFallback from './GlobalLearningResourcesFiltersFallback';
+import GlobalLearningResourcesContentFallback from './GlobalLearningResourcesContentFallback';
 
 export const GlobalLearningResourcesPage = () => {
   const { loader, purgeCache } = useSuspenseLoader(fetchAllData);
@@ -26,28 +27,14 @@ export const GlobalLearningResourcesPage = () => {
         </Suspense>
       </div>
       <div className="lr-c-global-learning-resources-page__main">
-        <Suspense
-          fallback={
-            <Spinner
-              size="xl"
-              aria-label="Learning resources are being loaded."
-            />
-          }
-        >
+        <Suspense fallback={<GlobalLearningResourcesFiltersFallback />}>
           <GlobalLearningResourcesFilters
             loader={loader}
             loaderOptions={loaderOptions}
             setLoaderOptions={setLoaderOptions}
           />
         </Suspense>
-        <Suspense
-          fallback={
-            <Spinner
-              size="xl"
-              aria-label="Learning resources are being loaded."
-            />
-          }
-        >
+        <Suspense fallback={<GlobalLearningResourcesContentFallback />}>
           <GlobalLearningResourcesContent
             loader={loader}
             loaderOptions={loaderOptions}

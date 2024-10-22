@@ -11,4 +11,16 @@
       height: 16px;
     }
   }
+  // Styles for Fallback component
+  &--item {
+    $heights: 65px, 25px, 30px, 35px, 40px, 45px, 50px, 55px, 
+              24px, 29px, 34px, 39px, 44px, 49px, 54px;
+
+    // Loop to generate classes using values from the heights list
+    @for $i from 1 through length($heights) {
+      &-#{$i} {
+        height: nth($heights, $i);
+      }
+    }
+  }
 }

@@ -1,5 +1,5 @@
 import React, { SyntheticEvent, useState } from 'react';
-import { QuickStart } from '@patternfly/quickstarts';
+import { QuickStart, QuickStartType } from '@patternfly/quickstarts';
 import {
   Button,
   Card,
@@ -41,6 +41,10 @@ const GlobalLearningResourcesQuickstartItem: React.FC<
     quickStart.spec.link?.href ?? 'https://access.redhat.com/'
   );
   const labelColor = quickStart.spec.type?.color;
+  const QUICK_START_TYPE: QuickStartType = {
+    text: 'Quick start',
+    color: 'green',
+  };
 
   const handleBookmark = async (e: SyntheticEvent<Element, Event>) => {
     const user = await chrome.auth.getUser();
@@ -63,7 +67,17 @@ const GlobalLearningResourcesQuickstartItem: React.FC<
   };
 
   return (
-    <Card className="lr-c-global-learning-resources-quickstart__card pf-v5-u-p-sm">
+    <Card
+      className="lr-c-global-learning-resources-quickstart__card"
+      onClick={() => {
+        if (quickStart.spec.type?.text === QUICK_START_TYPE.text) {
+          chrome.quickStarts.activateQuickstart(quickStart.metadata.name);
+        } else {
+          window.open(quickStart.spec.link?.href, '_blank');
+        }
+      }}
+      isClickable
+    >
       <TextContent className="lr-c-global-learning-resources-quickstart__card--content">
         <CardTitle
           component="div"
