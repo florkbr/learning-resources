@@ -31,7 +31,12 @@ const GlobalLearningResourcesFilters: React.FC<
 > = ({ loader, loaderOptions, setLoaderOptions }) => {
   const chrome = useChrome();
 
-  const [filters] = loader(chrome.auth.getUser);
+  const [filters, quickStarts] = loader(chrome.auth.getUser);
+  console.log(
+    `quickStarts from GlobalLearningResourcesFilters.tsx component: ${JSON.stringify(
+      quickStarts
+    )}`
+  );
 
   const handleInputChange = (
     _event: React.FormEvent<HTMLInputElement>,
