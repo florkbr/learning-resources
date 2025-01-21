@@ -136,7 +136,6 @@ const GlobalLearningResourcesFiltersMobile: React.FC<
           <div className="lr-c-global-learning-resources-page__menu-container">
             <Menu
               id="rootMenu"
-              // key={`root-menu-${activeMenu}`}
               containsDrilldown
               drilldownItemPath={drilldownPath}
               drilledInMenus={menuDrilledIn}

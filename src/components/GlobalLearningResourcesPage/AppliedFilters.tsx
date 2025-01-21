@@ -22,10 +22,10 @@ const AppliedFilters: React.FC<{
     const currentCategory = loaderOptions[categoryId];
     if (Array.isArray(currentCategory)) {
       const updatedCategory = currentCategory.filter((id) => id !== filterId);
-      setLoaderOptions({
-        ...loaderOptions,
+      setLoaderOptions((prevLoaderOptions: FetchQuickstartsOptions) => ({
+        ...prevLoaderOptions,
         [categoryId]: updatedCategory,
-      });
+      }));
     }
   };
 
