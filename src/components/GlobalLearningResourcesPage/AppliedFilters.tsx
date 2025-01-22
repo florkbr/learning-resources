@@ -15,14 +15,18 @@ import {
 
 const AppliedFilters: React.FC<{
   loaderOptions: FetchQuickstartsOptions;
-  setLoaderOptions: (options: FetchQuickstartsOptions) => void;
+  setLoaderOptions: (
+    options: (
+      prevLoaderOptions: FetchQuickstartsOptions
+    ) => FetchQuickstartsOptions
+  ) => void;
 }> = ({ loaderOptions, setLoaderOptions }) => {
   // Handle removing a single filter
   const removeFilter = (categoryId: CategoryID, filterId: string) => {
     const currentCategory = loaderOptions[categoryId];
     if (Array.isArray(currentCategory)) {
       const updatedCategory = currentCategory.filter((id) => id !== filterId);
-      setLoaderOptions((prevLoaderOptions: FetchQuickstartsOptions) => ({
+      setLoaderOptions((prevLoaderOptions) => ({
         ...prevLoaderOptions,
         [categoryId]: updatedCategory,
       }));
