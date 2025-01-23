@@ -22,19 +22,26 @@ import {
   ExtendedQuickstart,
   FetchQuickstartsOptions,
 } from '../../utils/fetchQuickstarts';
-import { Filter, FilterMap, ValidTags } from '../../utils/filtersInterface';
+import {
+  Filter,
+  FilterMap,
+  SortOrder,
+  ValidTags,
+} from '../../utils/filtersInterface';
 import { TagsEnum } from '../../utils/tagsEnum';
 
 interface GlobalLearningResourcesContentProps {
   loader: UnwrappedLoader<typeof fetchAllData>;
   loaderOptions: FetchQuickstartsOptions;
   purgeCache: () => void;
+  sortOrder: SortOrder;
 }
 
 interface GalleryQuickstartProps {
   quickStarts: ExtendedQuickstart[];
   purgeCache: () => void;
   filterMap: FilterMap;
+  sortOrder: SortOrder;
 }
 
 function isValidTagType(
@@ -75,13 +82,25 @@ const GalleryQuickstart: React.FC<GalleryQuickstartProps> = ({
   quickStarts,
   purgeCache,
   filterMap,
+  sortOrder,
 }) => {
+  const sortedQuickStarts = useMemo(() => {
+    if (!sortOrder) return quickStarts;
+    return [...quickStarts].sort((a, b) => {
+      const nameA = a.spec.displayName.toLowerCase();
+      const nameB = b.spec.displayName.toLowerCase();
+      return sortOrder === 'asc'
+        ? nameA.localeCompare(nameB)
+        : nameB.localeCompare(nameA);
+    });
+  }, [quickStarts, sortOrder]);
+
   return (
     <Gallery
       hasGutter
       className="lr-c-global-learning-resources-page__content--gallery"
     >
-      {quickStarts.map((quickStart) => {
+      {sortedQuickStarts.map((quickStart) => {
         const quickStartTags = findQuickstartFilterTags(filterMap, quickStart);
         return (
           <GalleryItem
@@ -105,10 +124,23 @@ const GalleryBookmarkedQuickstart: React.FC<GalleryQuickstartProps> = ({
   quickStarts,
   purgeCache,
   filterMap,
+  sortOrder,
 }) => {
   const [, setSearchParams] = useSearchParams();
+  const sortedBookmarkedQuickStarts = useMemo(() => {
+    const bookmarked = quickStarts.filter((item) => item.metadata.favorite);
+    if (!sortOrder) return bookmarked; // No sorting by default
 
-  const bookmarkedItemsCount = quickStarts.reduce(
+    return [...bookmarked].sort((a, b) => {
+      const nameA = a.spec.displayName.toLowerCase();
+      const nameB = b.spec.displayName.toLowerCase();
+      return sortOrder === 'asc'
+        ? nameA.localeCompare(nameB)
+        : nameB.localeCompare(nameA);
+    });
+  }, [quickStarts, sortOrder]);
+
+  const bookmarkedItemsCount = sortedBookmarkedQuickStarts.reduce(
     (acc, quickStart) => (quickStart.metadata.favorite ? acc + 1 : acc),
     0
   );
@@ -140,15 +172,13 @@ const GalleryBookmarkedQuickstart: React.FC<GalleryQuickstartProps> = ({
       </Bullseye>
     );
   }
-  const bookmarkedQuickStarts = quickStarts.filter(
-    (item) => item.metadata.favorite
-  );
+
   return (
     <Gallery
       hasGutter
       className="lr-c-global-learning-resources-page__content--gallery"
     >
-      {bookmarkedQuickStarts.map((quickStart) => {
+      {sortedBookmarkedQuickStarts.map((quickStart) => {
         if (quickStart.metadata.favorite) {
           const quickStartTags = findQuickstartFilterTags(
             filterMap,
@@ -175,7 +205,7 @@ const GalleryBookmarkedQuickstart: React.FC<GalleryQuickstartProps> = ({
 
 const GlobalLearningResourcesContent: React.FC<
   GlobalLearningResourcesContentProps
-> = ({ loader, loaderOptions, purgeCache }) => {
+> = ({ loader, loaderOptions, purgeCache, sortOrder }) => {
   const chrome = useChrome();
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -220,6 +250,7 @@ const GlobalLearningResourcesContent: React.FC<
           quickStarts={quickStarts}
           filterMap={filterMap}
           purgeCache={purgeCache}
+          sortOrder={sortOrder}
         />
       </TabContent>
       <TabContent
@@ -230,6 +261,7 @@ const GlobalLearningResourcesContent: React.FC<
           quickStarts={quickStarts}
           purgeCache={purgeCache}
           filterMap={filterMap}
+          sortOrder={sortOrder}
         />
       </TabContent>
     </div>

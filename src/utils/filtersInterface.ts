@@ -19,3 +19,5 @@ export type ValidTags = {
   [TagsEnum.ProductFamilies]: Filter[];
   [TagsEnum.UseCase]: Filter[];
 };
+
+export type SortOrder = 'asc' | 'desc' | null;
