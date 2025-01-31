@@ -11,6 +11,11 @@
       height: 16px;
     }
   }
+
+  &--categories {
+    margin-top: -52px;
+  }
+
   // Styles for Fallback component
   &--item {
     $heights: 65px, 25px, 30px, 35px, 40px, 45px, 50px, 55px, 

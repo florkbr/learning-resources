@@ -1,12 +1,17 @@
 import React from 'react';
 import {
   Button,
+  Flex,
+  FlexItem,
   Split,
   SplitItem,
   Stack,
   StackItem,
+  Text,
+  TextContent,
   TextInputGroup,
   TextInputGroupMain,
+  TextVariants,
 } from '@patternfly/react-core';
 import { FilterIcon, SortAmountDownAltIcon } from '@patternfly/react-icons';
 import './GlobalLearningResourcesFilters.scss';
@@ -76,19 +81,34 @@ const GlobalLearningResourcesFilters: React.FC<
           </SplitItem>
         </Split>
       </StackItem>
-      {filters.data.categories.map(
-        (category: FiltersCategory, index: number) => (
-          <StackItem key={index}>
-            <GlobalLearningResourcesFiltersCategory
-              categoryId={category.categoryId}
-              categoryName={category.categoryName}
-              categoryData={category.categoryData}
-              loaderOptions={loaderOptions}
-              setLoaderOptions={setLoaderOptions}
-            />
-          </StackItem>
-        )
-      )}
+
+      <StackItem>
+        <Flex justifyContent={{ default: 'justifyContentFlexEnd' }}>
+          <FlexItem>
+            <Button variant="plain" onClick={() => setLoaderOptions({})}>
+              <TextContent>
+                <Text component={TextVariants.small}>Clear filters</Text>
+              </TextContent>
+            </Button>
+          </FlexItem>
+        </Flex>
+      </StackItem>
+
+      <div className="lr-c-global-learning-resources-page__filters--categories">
+        {filters.data.categories.map(
+          (category: FiltersCategory, index: number) => (
+            <StackItem key={index}>
+              <GlobalLearningResourcesFiltersCategory
+                categoryId={category.categoryId}
+                categoryName={category.categoryName}
+                categoryData={category.categoryData}
+                loaderOptions={loaderOptions}
+                setLoaderOptions={setLoaderOptions}
+              />
+            </StackItem>
+          )
+        )}
+      </div>
     </Stack>
   );
 };
