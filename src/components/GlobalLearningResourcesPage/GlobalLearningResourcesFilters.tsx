@@ -26,10 +26,12 @@ import {
 } from '../../utils/fetchQuickstarts';
 import { SortOrder } from '../../utils/filtersInterface';
 
-interface GlobalLearningResourcesFiltersProps {
+export interface GlobalLearningResourcesFiltersProps {
   loader: UnwrappedLoader<typeof fetchAllData>;
   loaderOptions: FetchQuickstartsOptions;
-  setLoaderOptions: (options: FetchQuickstartsOptions) => void;
+  setLoaderOptions: React.Dispatch<
+    React.SetStateAction<FetchQuickstartsOptions>
+  >;
   setSortOrder: React.Dispatch<React.SetStateAction<SortOrder>>;
 }
 

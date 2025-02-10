@@ -9,7 +9,7 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import { FiltersCategory } from '../../utils/FiltersCategoryInterface';
-import { Filter } from '../../utils/filtersInterface';
+import { Filter, updateCategory } from '../../utils/filtersInterface';
 
 const GlobalLearningResourcesFiltersCategory: React.FC<FiltersCategory> = ({
   categoryId,
@@ -24,35 +24,19 @@ const GlobalLearningResourcesFiltersCategory: React.FC<FiltersCategory> = ({
     setIsExpanded(isExpanded);
   };
 
-  const updateCategory = (
-    isChecked: boolean,
-    filterId: string,
-    currentCategory: string | string[] | undefined
-  ) => {
-    if (isChecked) {
-      return [
-        ...(Array.isArray(currentCategory) ? currentCategory : []),
-        filterId,
-      ];
-    } else if (Array.isArray(currentCategory)) {
-      return currentCategory.filter((id) => id !== filterId);
-    }
-
-    return currentCategory;
-  };
-
   const updateLoaderOptions = (filter: Filter, isChecked: boolean) => {
     const currentCategory = loaderOptions[categoryId];
 
     const updatedCategory = updateCategory(
       isChecked,
       filter.id,
-      currentCategory
+      currentCategory,
+      categoryId
     );
 
     setLoaderOptions({
       ...loaderOptions,
-      [categoryId]: updatedCategory,
+      ...updatedCategory,
     });
   };
 
@@ -86,7 +70,9 @@ const GlobalLearningResourcesFiltersCategory: React.FC<FiltersCategory> = ({
                           alt={item.filterLabel}
                         />
                       ) : null}
-                      {item.filterLabel}
+                      <span className="lr-c-global-learning-resources-page__filters--checkbox-text">
+                        {item.filterLabel}
+                      </span>
                     </div>
                   }
                   id={item.id}

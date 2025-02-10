@@ -1,9 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
-import { GalleryItem, TabContent } from '@patternfly/react-core';
-import './GlobalLearningResourcesContent.scss';
-import { Bullseye, Gallery } from '@patternfly/react-core';
-import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import {
+  Bullseye,
   Button,
   EmptyState,
   EmptyStateActions,
@@ -11,8 +8,13 @@ import {
   EmptyStateFooter,
   EmptyStateHeader,
   EmptyStateIcon,
+  GalleryItem,
+  TabContent,
 } from '@patternfly/react-core';
 import CubesIcon from '@patternfly/react-icons/dist/dynamic/icons/cubes-icon';
+import './GlobalLearningResourcesContent.scss';
+import { Gallery } from '@patternfly/react-core';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import GlobalLearningResourcesQuickstartItem from './GlobalLearningResourcesQuickstartItem';
 import { useSearchParams } from 'react-router-dom';
 import { UnwrappedLoader } from '@redhat-cloud-services/frontend-components-utilities/useSuspenseLoader';
