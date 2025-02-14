@@ -10,7 +10,18 @@
     &-icon {
       width: var(--pf-v5-global--icon--FontSize--lg);
       height: var(--pf-v5-global--icon--FontSize--lg);
+      margin-bottom: var(--pf-v5-global--spacer--xs);
     }
+  }
+
+  &--expandable .pf-v5-c-expandable-section__toggle {
+    margin-bottom: var(--pf-v5-global--spacer--xs);
+    padding-bottom: var(--pf-v5-global--spacer--xs);
+  }
+
+  &--expandable .pf-v5-c-expandable-section__content {
+    margin-top: 0;
+    padding-top: 0;
   }
 
   &--categories {

@@ -49,12 +49,17 @@ const GlobalLearningResourcesFiltersCategory: React.FC<FiltersCategory> = ({
       toggleText={categoryName}
       onToggle={onToggle}
       isExpanded={isExpanded}
+      className="lr-c-global-learning-resources-page__filters--expandable"
     >
       {categoryData.map((subCategory, index) => (
-        <Stack component="div" className="pf-v5-u-mt-md" key={index}>
+        <Stack
+          component="div"
+          className="pf-v5-u-mb-md pf-v5-u-mt-0"
+          key={index}
+        >
           <TextContent>
             {subCategory.group ? (
-              <Text component={TextVariants.small} className="pf-v5-u-mb-0">
+              <Text component={TextVariants.small} className="pf-v5-u-mb-sm">
                 {subCategory.group}
               </Text>
             ) : null}
