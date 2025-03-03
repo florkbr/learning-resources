@@ -10,6 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { FiltersCategory } from '../../utils/FiltersCategoryInterface';
 import { Filter, updateCategory } from '../../utils/filtersInterface';
+import './GlobalLearningResourcesFilters.scss';
 
 const GlobalLearningResourcesFiltersCategory: React.FC<FiltersCategory> = ({
   categoryId,
@@ -64,10 +65,13 @@ const GlobalLearningResourcesFiltersCategory: React.FC<FiltersCategory> = ({
               </Text>
             ) : null}
             {subCategory.data.map((item) => (
-              <StackItem key={categoryId} className="pf-v5-u-display-flex">
+              <StackItem
+                key={categoryId}
+                className="pf-v5-u-display-flex pf-v5-u-align-items-center"
+              >
                 <Checkbox
                   label={
-                    <div className="lr-c-global-learning-resources-page__filters--checkbox">
+                    <div className="lr-c-global-learning-resources-page__filters--checkbox pf-v5-u-display-flex pf-v5-u-align-items-flex-start ">
                       {item.icon ? (
                         <img
                           className="lr-c-global-learning-resources-page__filters--checkbox-icon pf-v5-u-mr-sm"

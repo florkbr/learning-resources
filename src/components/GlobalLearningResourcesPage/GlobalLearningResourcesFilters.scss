@@ -5,7 +5,9 @@
 
   &--checkbox {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
+    justify-content: flex-start;
+
   
     &-icon {
       width: var(--pf-v5-global--icon--FontSize--lg);
@@ -42,8 +44,97 @@
   }
 }
 
+@media only screen and (max-width: 1400px) {
+  .lr-c-global-learning-resources-page__filters {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+
+    &--wrap {
+      display: flex;
+      flex-direction: column;
+    } 
+
+    &--categories {
+      margin-top: 0;
+    }
+
+    &--input {
+      width: 100%;
+    }
+
+    &--sort {
+      padding-left: var(--pf-v5-global--spacer--sm);
+    }
+
+    &--clear-filters {
+      margin-top: -50px;
+      margin-right: 45%;
+    }
+  }
+}
+
+@media only screen and (max-width: 1300px) {
+  .lr-c-global-learning-resources-page__filters {
+    &--clear-filters {
+      margin-right: 40%;
+    }
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  .lr-c-global-learning-resources-page__filters {
+    &--clear-filters {
+      margin-right: 30%;
+    }
+  }
+}
+
+@media only screen and (max-width: 1100px) {
+  .lr-c-global-learning-resources-page__filters {
+    &--clear-filters {
+      margin-right: 20%;
+    }
+  }
+}
+
+@media only screen and (max-width: 900px) {
+  .lr-c-global-learning-resources-page__filters {
+    &--clear-filters {
+      margin-right: 50%;
+    }
+  }
+}
+
+
+@media only screen and (max-width: 800px) {
+  .lr-c-global-learning-resources-page__filters {
+    &--clear-filters {
+      margin-right: 40%;
+    }
+  }
+}
+
+@media only screen and (max-width: 700px) {
+  .lr-c-global-learning-resources-page__filters {
+    &--clear-filters {
+      margin-right: 30%;
+    }
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .lr-c-global-learning-resources-page__filters {
+    &--clear-filters {
+      margin-right: 20%;
+    }
+  }
+}
+
+
 @media only screen and (max-width: 550px) {
   .lr-c-global-learning-resources-page__filters {
     display: none;
   }
 }
+
