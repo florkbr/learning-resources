@@ -58,10 +58,11 @@ const GlobalLearningResourcesFilters: React.FC<
       className="lr-c-global-learning-resources-page__filters pf-v5-u-p-lg"
     >
       <StackItem>
-        <Split>
+        <Split className="lr-c-global-learning-resources-page__filters--wrap">
           <SplitItem isFilled>
-            <TextInputGroup>
+            <TextInputGroup className="lr-c-global-learning-resources-page__filters--input">
               <TextInputGroupMain
+                className="lr-c-global-learning-resources-page__filters--input"
                 icon={<FilterIcon />}
                 value={loaderOptions['display-name']}
                 placeholder="Find by name ..."
@@ -71,6 +72,7 @@ const GlobalLearningResourcesFilters: React.FC<
           </SplitItem>
           <SplitItem>
             <Button
+              className="lr-c-global-learning-resources-page__filters--sort"
               variant="plain"
               onClick={() =>
                 setSortOrder((prev: SortOrder) =>
@@ -84,7 +86,7 @@ const GlobalLearningResourcesFilters: React.FC<
         </Split>
       </StackItem>
 
-      <StackItem>
+      <StackItem className="lr-c-global-learning-resources-page__filters--clear-filters">
         <Flex justifyContent={{ default: 'justifyContentFlexEnd' }}>
           <FlexItem>
             <Button variant="plain" onClick={() => setLoaderOptions({})}>
