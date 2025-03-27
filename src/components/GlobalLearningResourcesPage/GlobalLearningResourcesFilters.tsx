@@ -57,6 +57,10 @@ const GlobalLearningResourcesFilters: React.FC<
     });
   };
 
+  const hasActiveFilters = Object.values(loaderOptions).some((value) =>
+    Array.isArray(value) ? value.length > 0 : Boolean(value)
+  );
+
   return (
     <Stack
       hasGutter
@@ -102,7 +106,16 @@ const GlobalLearningResourcesFilters: React.FC<
           <FlexItem>
             <Button variant="plain" onClick={() => setLoaderOptions({})}>
               <TextContent>
-                <Text component={TextVariants.small}>Clear filters</Text>
+                <Text
+                  component={hasActiveFilters ? 'a' : TextVariants.small}
+                  className={`lr-c-global-learning-resources-page__filters--link ${
+                    hasActiveFilters
+                      ? 'pf-m-link'
+                      : 'pf-u-text-muted lr-c-global-learning-resources-page__filters--disabled'
+                  }`}
+                >
+                  Clear filters
+                </Text>
               </TextContent>
             </Button>
           </FlexItem>
