@@ -67,21 +67,18 @@ const GlobalLearningResourcesQuickstartItem: React.FC<
   };
 
   return (
-    <Card
-      className="lr-c-global-learning-resources-quickstart__card"
-      onClick={() => {
-        if (quickStart.spec.type?.text === QUICK_START_TYPE.text) {
-          chrome.quickStarts.activateQuickstart(quickStart.metadata.name);
-        } else {
-          window.open(quickStart.spec.link?.href, '_blank');
-        }
-      }}
-      isClickable
-    >
+    <Card className="lr-c-global-learning-resources-quickstart__card">
       <TextContent className="lr-c-global-learning-resources-quickstart__card--content">
         <CardTitle
           component="div"
           className="lr-c-global-learning-resources-quickstart__card--title"
+          onClick={() => {
+            if (quickStart.spec.type?.text === QUICK_START_TYPE.text) {
+              chrome.quickStarts.activateQuickstart(quickStart.metadata.name);
+            } else {
+              window.open(quickStart.spec.link?.href, '_blank');
+            }
+          }}
         >
           <div className="lr-c-global-learning-resources-quickstart__card--title-container">
             <Text component={TextVariants.h4}>
@@ -90,7 +87,7 @@ const GlobalLearningResourcesQuickstartItem: React.FC<
           </div>
           <Button
             onClick={(e) => {
-              e.stopPropagation(); // Prevent the event from propagating to the Card's onClick
+              e.stopPropagation(); // Prevent the event from propagating to the Title's onClick
               handleBookmark(e);
             }}
             variant="plain"
