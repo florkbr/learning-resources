@@ -24,6 +24,7 @@ import {
   makeDownloadStep,
 } from './steps/download';
 import { MAX_TASKS, NAME_KIND, NAME_TASK_TITLES } from './steps/common';
+import { FilterData } from '../../utils/FiltersCategoryInterface';
 
 const CustomButtons = (props: WizardButtonsProps) => {
   return (
@@ -97,7 +98,7 @@ export function stageFromStepName(name: string): CreatorWizardStage {
   throw new Error('unable to parse step name: ' + name);
 }
 
-export function makeSchema(chrome: ChromeAPI): Schema {
+export function makeSchema(chrome: ChromeAPI, filterData: FilterData): Schema {
   const bundles = chrome.getAvailableBundles();
 
   const taskSteps = [];
@@ -123,7 +124,12 @@ export function makeSchema(chrome: ChromeAPI): Schema {
     fields: [
       makeKindStep(),
       ...ALL_ITEM_KINDS.map((kind) =>
-        makeDetailsStep({ kind, bundles, downloadStep: STEP_DOWNLOAD })
+        makeDetailsStep({
+          kind,
+          bundles,
+          downloadStep: STEP_DOWNLOAD,
+          filterData,
+        })
       ),
       ...ALL_ITEM_KINDS.filter((kind) => metaForKind(kind).hasTasks).map(
         (kind) =>

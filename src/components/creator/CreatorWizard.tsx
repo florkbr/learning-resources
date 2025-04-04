@@ -34,6 +34,7 @@ import {
   NAME_KIND,
   NAME_PANEL_INTRODUCTION,
   NAME_PREREQUISITES,
+  NAME_TAGS,
   NAME_TASKS_ARRAY,
   NAME_TASK_TITLES,
   NAME_TITLE,
@@ -42,6 +43,8 @@ import {
 import StringArrayInput from '../StringArrayInput';
 import { CreatorWizardContext } from './context';
 import { CreatorFiles } from './types';
+import { FilterData } from '../../utils/FiltersCategoryInterface';
+import TagsSelector from './TagsSelector';
 
 export type CreatorWizardProps = {
   onChangeKind: (newKind: ItemKind | null) => void;
@@ -50,6 +53,8 @@ export type CreatorWizardProps = {
   onChangeCurrentStage: (stage: CreatorWizardStage) => void;
   resetCreator: () => void;
   files: CreatorFiles;
+  filterData: FilterData;
+  onChangeTags: (tags: { [kind: string]: string[] }) => void;
 };
 
 type FormValue = AnyObject;
@@ -59,6 +64,7 @@ type UpdaterProps = {
   onChangeKind: (newKind: ItemKind | null) => void;
   onChangeBundles: (bundles: string[]) => void;
   onChangeQuickStartSpec: (newValue: QuickStartSpec) => void;
+  onChangeTags: CreatorWizardProps['onChangeTags'];
 };
 
 const DEFAULT_TASK_TITLES: string[] = [''];
@@ -75,14 +81,20 @@ type FormTaskValue = {
 const PropUpdater = ({
   values,
   onChangeKind,
+  onChangeTags,
   onChangeBundles,
   onChangeQuickStartSpec,
 }: UpdaterProps) => {
   const bundles = values[NAME_BUNDLES];
+  const tags = values[NAME_TAGS];
 
   useEffect(() => {
     onChangeBundles(bundles ?? []);
   }, [bundles]);
+
+  useEffect(() => {
+    onChangeTags(tags ?? {});
+  }, [tags]);
 
   const rawKind: string | undefined = values[NAME_KIND];
   const title: string | undefined = values[NAME_TITLE];
@@ -283,10 +295,12 @@ const CreatorWizard = ({
   onChangeBundles,
   onChangeCurrentStage,
   resetCreator,
+  onChangeTags,
   files,
+  filterData,
 }: CreatorWizardProps) => {
   const chrome = useChrome();
-  const schema = useMemo(() => makeSchema(chrome), []);
+  const schema = useMemo(() => makeSchema(chrome, filterData), []);
 
   const context = useMemo(
     () => ({
@@ -304,6 +318,7 @@ const CreatorWizard = ({
     'lr-wizard-spy': WizardSpy,
     'lr-task-title-preview': TaskTitlePreview,
     'lr-string-array': StringArrayInput,
+    'lr-tag-filter-selector': TagsSelector,
   };
 
   return (
@@ -314,7 +329,10 @@ const CreatorWizard = ({
         componentMapper={componentMapper}
       >
         {({ formFields }) => (
-          <form onSubmit={(e) => e.preventDefault()} className="pf-v5-c-form">
+          <form
+            onSubmit={(e) => e.preventDefault()}
+            className="pf-v5-c-form lrn-creator-form"
+          >
             <FormSpy subscription={{ values: true }}>
               {/*
             In order to display the live preview, we need to update the parent
@@ -332,6 +350,7 @@ const CreatorWizard = ({
                 <PropUpdater
                   values={props.values}
                   onChangeKind={onChangeKind}
+                  onChangeTags={onChangeTags}
                   onChangeBundles={onChangeBundles}
                   onChangeQuickStartSpec={onChangeQuickStartSpec}
                 />
