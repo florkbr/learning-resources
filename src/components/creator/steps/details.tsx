@@ -13,11 +13,13 @@ import {
   NAME_DESCRIPTION,
   NAME_DURATION,
   NAME_KIND,
+  NAME_TAGS,
   NAME_TITLE,
   NAME_URL,
   REQUIRED,
 } from './common';
 import { panelOverviewStepName } from './panel-overview';
+import { FilterData } from '../../../utils/FiltersCategoryInterface';
 
 export type Bundles = ReturnType<ChromeAPI['getAvailableBundles']>;
 
@@ -46,10 +48,12 @@ export function makeDetailsStep({
   kind,
   bundles,
   downloadStep,
+  filterData,
 }: {
   kind: ItemKind;
   bundles: Bundles;
   downloadStep: string;
+  filterData: FilterData;
 }) {
   const meta = metaForKind(kind);
 
@@ -73,6 +77,14 @@ export function makeDetailsStep({
         value: b.id,
         label: `${b.title} (${b.id})`,
       })),
+      isRequired: true,
+      validate: [REQUIRED],
+    },
+    {
+      component: 'lr-tag-filter-selector',
+      name: NAME_TAGS,
+      label: 'Resource tags(s)',
+      filterData,
       isRequired: true,
       validate: [REQUIRED],
     },

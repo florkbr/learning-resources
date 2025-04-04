@@ -1,6 +1,5 @@
 .lr-c-global-learning-resources-quickstart__card {
   height: 100%;
-  cursor: pointer;
 
   // UXD wants to have 16px padding instead of PF's deault 24px
   --pf-v5-c-card--first-child--PaddingTop: var(--pf-v5-global--spacer--md);
@@ -18,6 +17,7 @@
   &--title {
     display: flex;
     justify-content: space-between;
+    cursor: pointer;
 
     &-container {
       display: flex;

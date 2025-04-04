@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { Suspense, useMemo, useState } from 'react';
 import YAML from 'yaml';
 import {
   Grid,
@@ -13,6 +13,10 @@ import { ItemKind, metaForKind } from './components/creator/meta';
 import CreatorPreview from './components/creator/CreatorPreview';
 import './Creator.scss';
 import { CreatorWizardStage } from './components/creator/schema';
+import useSuspenseLoader, {
+  UnwrappedLoader,
+} from '@redhat-cloud-services/frontend-components-utilities/useSuspenseLoader/useSuspenseLoader';
+import fetchFilters from './utils/fetchFilters';
 
 const BASE_METADATA = {
   name: 'test-quickstart',
@@ -34,7 +38,14 @@ function makeDemoQuickStart(
   };
 }
 
-const CreatorInternal = ({ resetCreator }: { resetCreator: () => void }) => {
+const CreatorInternal = ({
+  resetCreator,
+  filterLoader,
+}: {
+  resetCreator: () => void;
+  filterLoader: UnwrappedLoader<typeof fetchFilters>;
+}) => {
+  const { data: filterData } = filterLoader();
   const [rawKind, setRawKind] = useState<ItemKind | null>(null);
 
   const [rawQuickStart, setRawQuickStart] = useState<QuickStart>({
@@ -52,6 +63,7 @@ const CreatorInternal = ({ resetCreator }: { resetCreator: () => void }) => {
     rawKind !== null ? { id: rawKind, meta: metaForKind(rawKind) } : null;
 
   const [bundles, setBundles] = useState<string[]>([]);
+  const [tags, setTags] = useState<{ [kind: string]: string[] }>({});
   const [currentStage, setCurrentStage] = useState<CreatorWizardStage>({
     type: 'card',
   });
@@ -132,15 +144,23 @@ const CreatorInternal = ({ resetCreator }: { resetCreator: () => void }) => {
       },
     };
 
+    const allTags = bundles.toSorted().map((bundle) => ({
+      kind: 'bundle',
+      value: bundle,
+    }));
+    Object.entries(tags).forEach(([kind, values]) => {
+      values.forEach((value) => {
+        allTags.push({ kind, value });
+      });
+    });
+
     return [
       {
         name: 'metadata.yaml',
         content: YAML.stringify({
           kind: 'QuickStarts',
           name: effectiveName,
-          tags: bundles
-            .toSorted()
-            .map((bundle) => ({ kind: 'bundle', value: bundle })),
+          tags: allTags,
         }),
       },
       {
@@ -148,7 +168,7 @@ const CreatorInternal = ({ resetCreator }: { resetCreator: () => void }) => {
         content: YAML.stringify(adjustedQuickstart),
       },
     ];
-  }, [quickStart, bundles]);
+  }, [quickStart, bundles, tags]);
 
   return (
     <PageGroup>
@@ -173,10 +193,12 @@ const CreatorInternal = ({ resetCreator }: { resetCreator: () => void }) => {
         <Grid hasGutter className="pf-v5-u-h-100 pf-v5-u-w-100">
           <GridItem span={12} lg={isDownloadStage ? 6 : 12}>
             <CreatorWizard
+              onChangeTags={setTags}
               onChangeKind={setKind}
               onChangeQuickStartSpec={(spec) => {
                 updateSpec(() => spec);
               }}
+              filterData={filterData}
               onChangeBundles={setBundles}
               onChangeCurrentStage={setCurrentStage}
               resetCreator={resetCreator}
@@ -200,13 +222,17 @@ const CreatorInternal = ({ resetCreator }: { resetCreator: () => void }) => {
 };
 
 const Creator = () => {
+  const { loader } = useSuspenseLoader(fetchFilters);
   const [resetCount, setResetCount] = useState(0n);
 
   return (
-    <CreatorInternal
-      key={resetCount}
-      resetCreator={() => setResetCount((old) => old + 1n)}
-    />
+    <Suspense fallback={<div>Loading...</div>}>
+      <CreatorInternal
+        filterLoader={loader}
+        key={resetCount}
+        resetCreator={() => setResetCount((old) => old + 1n)}
+      />
+    </Suspense>
   );
 };
 
