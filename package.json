@@ -20,8 +20,8 @@
     "postinstall": "ts-patch install"
   },
   "dependencies": {
-    "@data-driven-forms/pf4-component-mapper": "^4.0.1",
-    "@data-driven-forms/react-form-renderer": "^4.0.1",
+    "@data-driven-forms/pf4-component-mapper": "^4.1.1",
+    "@data-driven-forms/react-form-renderer": "^4.1.1",
     "@patternfly/quickstarts": "^6.2.2",
     "@patternfly/react-core": "^6.2.2",
     "@patternfly/react-table": "^6.2.2",
