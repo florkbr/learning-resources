@@ -6,6 +6,7 @@ import {
 import {
   Badge,
   Button,
+  Content,
   ExpandableSection,
   Flex,
   FlexItem,
@@ -13,8 +14,6 @@ import {
   GalleryItem,
   Split,
   SplitItem,
-  Text,
-  TextContent,
   Title,
 } from '@patternfly/react-core';
 import React, { PropsWithChildren, useState } from 'react';
@@ -50,7 +49,7 @@ const CatalogWrapper: React.FC<
           <SplitItem isFilled>
             <Title headingLevel="h3" size="lg">
               {sectionTitle}
-              <Badge className="pf-v5-u-ml-sm">{sectionCount}</Badge>
+              <Badge className="pf-v6-u-ml-sm">{sectionCount}</Badge>
             </Title>
           </SplitItem>
           <SplitItem>{rightTitle}</SplitItem>
@@ -74,7 +73,7 @@ const CatalogWrapper: React.FC<
           <SplitItem isFilled>
             <Title headingLevel="h3" size="lg">
               {sectionTitle}
-              <Badge isRead={!sectionCount} className="pf-v5-u-ml-sm">
+              <Badge isRead={!sectionCount} className="pf-v6-u-ml-sm">
                 {sectionCount}
               </Badge>
             </Title>
@@ -122,9 +121,9 @@ const CatalogSection = ({
         id={sectionName}
         className="lr-c-catalog-section"
       >
-        <FlexItem className="pf-v5-u-mr-sm">
+        <FlexItem className="pf-v6-u-mr-sm">
           <Button
-            className="pf-v5-c-expandable-section__toggle pf-v5-u-pl-0 pf-v5-u-pr-0"
+            className="pf-v6-c-expandable-section__toggle pf-v6-u-pl-0 pf-v6-u-pr-0"
             variant="plain"
             isDisabled
             icon={<AngleRightIcon />}
@@ -134,7 +133,7 @@ const CatalogSection = ({
           <SplitItem isFilled>
             <Title headingLevel="h3" size="lg">
               {sectionTitle}
-              <Badge isRead={false} className="pf-v5-u-ml-sm">
+              <Badge isRead={false} className="pf-v6-u-ml-sm">
                 {sectionCount}
               </Badge>
             </Title>
@@ -154,9 +153,9 @@ const CatalogSection = ({
       rightTitle={rightTitle}
     >
       {sectionDescription && (
-        <TextContent className="pf-v5-u-mb-md">
-          <Text>{sectionDescription}</Text>
-        </TextContent>
+        <Content className="pf-v6-u-mb-md">
+          <Content component="p">{sectionDescription}</Content>
+        </Content>
       )}
       {sectionCount ? (
         <Gallery hasGutter>

@@ -72,10 +72,10 @@ const CreatorPreview = ({
     <Flex
       direction={{ default: 'column' }}
       gap={{ default: 'gapNone' }}
-      className="pf-v5-u-h-100"
+      className="pf-v6-u-h-100"
     >
       <FlexItem>
-        <Title headingLevel="h2" size="xl" className="pf-v5-u-mb-md">
+        <Title headingLevel="h2" size="xl" className="pf-v6-u-mb-md">
           Live {showPanel ? kindMeta.displayName : 'card'} preview
         </Title>
       </FlexItem>

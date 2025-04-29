@@ -1,9 +1,8 @@
 import React, { Fragment } from 'react';
 import {
-  Text,
-  TextContent,
-  TextVariants,
-} from '@patternfly/react-core/dist/dynamic/components/Text';
+  Content,
+  ContentVariants,
+} from '@patternfly/react-core/dist/dynamic/components/Content';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { Link } from 'react-router-dom';
 import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
@@ -60,7 +59,7 @@ const LearningResourcesWidget: React.FunctionComponent<{
           {bookmarks.map(({ spec, metadata }, index) => (
             <Flex key={index} className="lrn-widg-l-flex-row">
               <FlexItem className="item-1">
-                <TextContent>
+                <Content>
                   {metadata.tags.find(
                     ({ kind }: { kind: string }) => kind === 'content'
                   )?.value === 'quickstart' ? (
@@ -75,12 +74,12 @@ const LearningResourcesWidget: React.FunctionComponent<{
                   ) : (
                     <a href={spec.link?.href} target="_blank" rel="noreferrer">
                       {spec.displayName}
-                      <Icon className="pf-v5-u-ml-sm" size="sm" isInline>
+                      <Icon className="pf-v6-u-ml-sm" size="sm" isInline>
                         <ExternalLinkAltIcon />
                       </Icon>
                     </a>
                   )}
-                </TextContent>
+                </Content>
               </FlexItem>
               <Flex className="group">
                 <FlexItem className="item-2">
@@ -91,11 +90,11 @@ const LearningResourcesWidget: React.FunctionComponent<{
                   )}
                 </FlexItem>
                 <FlexItem className="item-3">
-                  <TextContent>
-                    <Text component={TextVariants.small}>
+                  <Content>
+                    <Content component={ContentVariants.small}>
                       {spec.link?.href ? getPathName(spec.link?.href) : ''}
-                    </Text>
-                  </TextContent>
+                    </Content>
+                  </Content>
                 </FlexItem>
               </Flex>
             </Flex>

@@ -6,8 +6,6 @@ import {
   EmptyStateActions,
   EmptyStateBody,
   EmptyStateFooter,
-  EmptyStateHeader,
-  EmptyStateIcon,
   GalleryItem,
   TabContent,
 } from '@patternfly/react-core';
@@ -145,12 +143,12 @@ const GalleryBookmarkedQuickstart: React.FC<GalleryQuickstartProps> = ({
   if (bookmarkedItemsCount === 0) {
     return (
       <Bullseye>
-        <EmptyState className="lr-c-global-learning-resources-page__content--empty">
-          <EmptyStateHeader
-            titleText="No resources bookmarked"
-            headingLevel="h4"
-            icon={<EmptyStateIcon icon={CubesIcon} />}
-          />
+        <EmptyState
+          headingLevel="h4"
+          icon={CubesIcon}
+          titleText="No resources bookmarked"
+          className="lr-c-global-learning-resources-page__content--empty"
+        >
           <EmptyStateBody>
             You don&apos;t have any bookmarked learning resources. Click the
             icon in cards on the &apos;All learning resources&apos; tab to

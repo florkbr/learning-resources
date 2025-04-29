@@ -172,7 +172,7 @@ const CreatorInternal = ({
 
   return (
     <PageGroup>
-      <PageSection className="rc-header">
+      <PageSection hasBodyWrapper={false} className="rc-header">
         <Title headingLevel="h1" size="2xl">
           Add new learning resource
         </Title>
@@ -189,8 +189,12 @@ const CreatorInternal = ({
         </p>
       </PageSection>
 
-      <PageSection isFilled padding={{ default: 'noPadding' }}>
-        <Grid hasGutter className="pf-v5-u-h-100 pf-v5-u-w-100">
+      <PageSection
+        hasBodyWrapper={false}
+        isFilled
+        padding={{ default: 'noPadding' }}
+      >
+        <Grid hasGutter className="pf-v6-u-h-100 pf-v6-u-w-100">
           <GridItem span={12} lg={isDownloadStage ? 6 : 12}>
             <CreatorWizard
               onChangeTags={setTags}
@@ -207,7 +211,7 @@ const CreatorInternal = ({
           </GridItem>
 
           {isDownloadStage ? (
-            <GridItem span={12} lg={6} className="pf-v5-u-pt-md-on-lg">
+            <GridItem span={12} lg={6} className="pf-v6-u-pt-md-on-lg">
               <CreatorPreview
                 kindMeta={selectedKind?.meta ?? null}
                 quickStart={quickStart}

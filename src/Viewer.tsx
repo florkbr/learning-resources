@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import './Viewer.scss';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import {
   LoadingBox,
@@ -84,8 +83,11 @@ export const Viewer = ({ bundle }: { bundle: string }) => {
 
   return (
     <PageGroup id="learning-resources-wrapper" style={{ height: `${size}px` }}>
-      <PageSection className="pf-v5-u-p-lg lr-c-catalog__header">
-        <StackItem className="pf-v5-u-mb-md">
+      <PageSection
+        hasBodyWrapper={false}
+        className="pf-v6-u-p-lg lr-c-catalog__header"
+      >
+        <StackItem className="pf-v6-u-mb-md">
           <CatalogHeader />
         </StackItem>
         <StackItem>
@@ -95,8 +97,11 @@ export const Viewer = ({ bundle }: { bundle: string }) => {
           />
         </StackItem>
       </PageSection>
-      <PageSection className="pf-v5-u-background-color-200 pf-m-fill">
-        <div className="pf-v5-u-h-100">
+      <PageSection
+        hasBodyWrapper={false}
+        className="pf-v6-u-background-color-200 pf-m-fill"
+      >
+        <div className="pf-v6-u-h-100">
           <Sidebar id="content-wrapper" isPanelRight hasGutter>
             <SidebarContent
               id="quick-starts"
@@ -154,7 +159,7 @@ export const Viewer = ({ bundle }: { bundle: string }) => {
                     activeQuickStartID={activeQuickStartID}
                     allQuickStartStates={allQuickStartStates}
                   />
-                  <Divider className="pf-v5-u-mt-lg pf-v5-u-mb-lg" />
+                  <Divider className="pf-v6-u-mt-lg pf-v6-u-mb-lg" />
                 </React.Fragment>
               )}
               <CatalogSection
@@ -167,7 +172,7 @@ export const Viewer = ({ bundle }: { bundle: string }) => {
                 activeQuickStartID={activeQuickStartID}
                 allQuickStartStates={allQuickStartStates}
               />
-              <Divider className="pf-v5-u-mt-lg pf-v5-u-mb-lg" />
+              <Divider className="pf-v6-u-mt-lg pf-v6-u-mb-lg" />
               <CatalogSection
                 sectionName="quick-starts"
                 toggleFavorite={toggleFavorite}
@@ -178,7 +183,7 @@ export const Viewer = ({ bundle }: { bundle: string }) => {
                 activeQuickStartID={activeQuickStartID}
                 allQuickStartStates={allQuickStartStates}
               />
-              <Divider className="pf-v5-u-mt-lg pf-v5-u-mb-lg" />
+              <Divider className="pf-v6-u-mt-lg pf-v6-u-mb-lg" />
               <CatalogSection
                 sectionName="learning-paths"
                 toggleFavorite={toggleFavorite}
@@ -189,7 +194,7 @@ export const Viewer = ({ bundle }: { bundle: string }) => {
                 activeQuickStartID={activeQuickStartID}
                 allQuickStartStates={allQuickStartStates}
               />
-              <Divider className="pf-v5-u-mt-lg pf-v5-u-mb-lg" />
+              <Divider className="pf-v6-u-mt-lg pf-v6-u-mb-lg" />
               <CatalogSection
                 sectionName="other-content-types"
                 toggleFavorite={toggleFavorite}
@@ -203,7 +208,7 @@ export const Viewer = ({ bundle }: { bundle: string }) => {
             </SidebarContent>
             <SidebarPanel
               variant="sticky"
-              className="pf-v5-u-background-color-200 pf-v5-u-pl-lg pf-v5-u-pl-0-on-lg"
+              className="pf-v6-u-background-color-200 pf-v6-u-pl-lg pf-v6-u-pl-0-on-lg"
             >
               <TableOfContents
                 defaultActive="bookmarks"
