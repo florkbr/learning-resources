@@ -87,6 +87,20 @@ objects:
               - pathname: "/iam/learning-resources"
                 props:
                   bundle: iam
+          - id: globalLearningResourcesPage
+            module: ./GlobalLearningResourcesPage
+            routes:
+              - pathname: /learning-resources
+          - id: learningResourcesCreator
+            module: "./Creator"
+            routes:
+            - pathname: "/learning-resources/creator"
+              exact: true
+              permissions:
+              - method: featureFlag
+                args:
+                - platform.chrome.quickstarts.creator
+                - true
       searchEntries:
         - id: learning-resources
           title: All Learning Resources
