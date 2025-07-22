@@ -47,8 +47,8 @@ const TableOfContents: React.FC<{
   };
 
   const onJumpLinkClick = React.useCallback(
-    (item: string) => {
-      // Set flag to prevent intersection observer from overriding
+    (event: React.MouseEvent, item: string) => {
+      event.preventDefault(); // Prevent default href navigation
       isClickingRef.current = true;
       setActive(item);
 
@@ -140,9 +140,9 @@ const TableOfContents: React.FC<{
         {linkItems.map(({ id, label }) => (
           <JumpLinksItem
             key={id}
-            onClick={() => onJumpLinkClick(id)}
+            href={`#${id}`}
+            onClick={(event) => onJumpLinkClick(event, id)}
             isActive={activeItem === id}
-            href="#"
           >
             {label}
           </JumpLinksItem>
