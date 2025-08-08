@@ -1,5 +1,6 @@
 import React from 'react';
 import { FlagProvider, IConfig } from '@unleash/proxy-client-react';
+import * as chrome from '@redhat-cloud-services/frontend-components/useChrome';
 import HelpPanel from '../../src/components/HelpPanel';
 
 const defaultFlags: IConfig['bootstrap'] = [{
@@ -63,6 +64,12 @@ describe('HelpPanel', () => {
 
   it('should switch sub tabs', () => {
     const toggleDrawerSpy = cy.spy();
+    cy.stub(chrome, 'useChrome').returns({
+      getBundleData: () => ({
+        bundleId: 'rhel',
+        bundleTitle: 'RHEL',
+      }),
+    } as any);
     cy.mount(
       <Wrapper>
         <HelpPanel toggleDrawer={toggleDrawerSpy} />
@@ -74,8 +81,44 @@ describe('HelpPanel', () => {
     cy.contains('Find product documentation, quick starts, learning paths, and more', { timeout: 10000 }).should('be.visible');
     
     cy.contains('APIs').click();
-    cy.get('#help-panel-api').should('be.visible');
+    cy.contains('API Documentation').should('be.visible');
   })
+
+  it('should display API panel features', () => {
+    const toggleDrawerSpy = cy.spy();
+    cy.stub(chrome, 'useChrome').returns({
+      getBundleData: () => ({
+        bundleId: 'rhel',
+        bundleTitle: 'RHEL',
+      }),
+      getAvailableBundles: () => [{ id: 'rhel', title: 'RHEL' }],
+    } as any);
+    cy.mount(
+      <Wrapper>
+        <HelpPanel toggleDrawer={toggleDrawerSpy} />
+      </Wrapper>
+    );
+
+    cy.contains('APIs').click();
+    cy.contains('API Documentation').should('be.visible');
+
+    // Check for initial state
+    cy.contains('API Documentation (3)').should('be.visible');
+    cy.contains('Provisioning API').should('be.visible');
+    cy.contains('Cost Management API').should('be.visible');
+    cy.contains('User Access API').should('be.visible');
+
+    // Check for bundle services
+    cy.contains('RHEL').should('be.visible');
+    cy.contains('Ansible').should('be.visible');
+    cy.contains('OpenShift').should('be.visible');
+    cy.contains('Settings').should('be.visible');
+
+    // Check external link
+    cy.contains('API Documentation Catalog')
+      .should('have.attr', 'href', 'https://developers.redhat.com/api-catalog/')
+      .should('have.attr', 'target', '_blank');
+  });
 
   it('should create new panel tab', () => {
     const toggleDrawerSpy = cy.spy();
