@@ -39,7 +39,7 @@ export const loaderOptionsFalllback: FetchQuickstartsOptions = {
 
 async function fetchQuickstarts(
   getUser: ChromeAPI['auth']['getUser'],
-  options?: FetchQuickstartsOptions
+  { ['display-name']: displayName, ...options }: FetchQuickstartsOptions = {}
 ) {
   const user = await getUser();
   if (!user) {
@@ -47,17 +47,16 @@ async function fetchQuickstarts(
   }
   const account = user.identity.internal?.account_id;
 
-  const quickstartsPath = `${API_BASE}/${QUICKSTARTS}`;
+  const quickstartsPath = `${API_BASE}${QUICKSTARTS}`;
 
   const contentPromise = axios
     .get<{ data: { content: ExtendedQuickstart }[] }>(quickstartsPath, {
       params: {
         account,
         ...options,
-        'display-name':
-          options?.['display-name']?.trim() === ''
-            ? ''
-            : options?.['display-name'],
+        ...(displayName?.trim() && {
+          'display-name': displayName?.trim(),
+        }),
       },
     })
     .then(({ data }) => {
