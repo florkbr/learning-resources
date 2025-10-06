@@ -52,6 +52,8 @@ async function fetchQuickstarts(
   const contentPromise = axios
     .get<{ data: { content: ExtendedQuickstart }[] }>(quickstartsPath, {
       params: {
+        // skip pagination
+        limit: -1,
         account,
         ...options,
         ...(displayName?.trim() && {
