@@ -36,7 +36,7 @@ async function toggleFavorite(
   const account = user.identity.internal?.account_id;
 
   try {
-    await axios.post(`${API_BASE}/${FAVORITES}?account=${account}`, {
+    await axios.post(`${API_BASE}${FAVORITES}?account=${account}`, {
       quickstartName,
       favorite,
     });

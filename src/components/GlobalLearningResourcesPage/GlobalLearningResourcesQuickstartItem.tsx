@@ -55,7 +55,7 @@ const GlobalLearningResourcesQuickstartItem: React.FC<
     e.stopPropagation();
     try {
       setIsBookmarked((flag: boolean) => !flag);
-      await axios.post(`${API_BASE}/${FAVORITES}?account=${account}`, {
+      await axios.post(`${API_BASE}${FAVORITES}?account=${account}`, {
         quickstartName: quickStart.metadata.name,
         favorite: !isBookmarked,
       });

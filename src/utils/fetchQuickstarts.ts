@@ -67,7 +67,7 @@ async function fetchQuickstarts(
 
   const favoritesPromise = account
     ? axios
-        .get<{ data: FavoriteQuickStart[] }>(`${API_BASE}/${FAVORITES}`, {
+        .get<{ data: FavoriteQuickStart[] }>(`${API_BASE}${FAVORITES}`, {
           params: { account },
         })
         .then(({ data }) => data.data)
