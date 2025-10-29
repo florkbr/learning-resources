@@ -25,8 +25,10 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 type TabDefinition = {
   id: string;
   title: ReactNode;
+  tabTitle?: string;
   closeable?: boolean;
   tabType: TabType;
+  isNewTab?: boolean; // Track if this was originally a "New tab"
 };
 
 type SubTab = Omit<TabDefinition, 'id'> & {
@@ -64,9 +66,16 @@ const subTabs: SubTab[] = [
   },
   {
     title: 'My support cases',
+    tabTitle: 'Support',
     tabType: TabType.support,
   },
 ];
+
+// Helper function to get sub-tab title by TabType
+const getSubTabTitle = (tabType: TabType): string => {
+  const subTab = subTabs.find((tab) => tab.tabType === tabType);
+  return subTab?.tabTitle || (subTab?.title as string) || 'Find help';
+};
 
 const NEW_TAB_PLACEHOLDER = 'New tab';
 
@@ -234,12 +243,12 @@ const HelpPanelCustomTabs = () => {
     // The title will be a placeholder until action is taken by the user
     setNewActionTitle(undefined);
     const newTabId = crypto.randomUUID();
-    console.log(activeTab);
     const tab = {
       id: newTabId,
       title: NEW_TAB_PLACEHOLDER,
       closeable: true,
-      tabType: activeTab?.tabType,
+      tabType: TabType.learn,
+      isNewTab: true,
     };
     addTab(tab);
     setTimeout(() => {
@@ -251,8 +260,22 @@ const HelpPanelCustomTabs = () => {
 
   const handleClose = (_e: unknown, tabId: number | string) => {
     if (typeof tabId === 'string') {
+      const closingTabIndex = tabs.findIndex((tab) => tab.id === tabId);
+      const isClosingActiveTab = activeTab.id === tabId;
+
       removeTab(tabId);
-      setActiveTab(tabs[0]);
+      if (isClosingActiveTab) {
+        const remainingTabs = tabs.filter((tab) => tab.id !== tabId);
+
+        if (remainingTabs.length > 0) {
+          const newActiveIndex =
+            closingTabIndex >= remainingTabs.length
+              ? remainingTabs.length - 1
+              : closingTabIndex;
+
+          setActiveTab(remainingTabs[newActiveIndex]);
+        }
+      }
     }
   };
 
@@ -305,9 +328,16 @@ const HelpPanelCustomTabs = () => {
           <SubTabs
             activeSubTabKey={tab.tabType ?? TabType.learn}
             setActiveSubTabKey={(tabType) => {
+              let newTitle = tab.title;
+              if (!tab.closeable) {
+                newTitle = getSubTabTitle(tabType);
+              } else if (tab.isNewTab) {
+                newTitle = getSubTabTitle(tabType);
+              }
               const nextTab = {
                 ...tab,
                 tabType: tabType,
+                title: newTitle,
               };
               updateTab(nextTab);
               setActiveTab(nextTab);
